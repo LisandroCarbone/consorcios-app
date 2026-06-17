@@ -1,0 +1,3186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Automatización de Consorcios</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151d30;
+            --bg-card-hover: #1c273e;
+            --border-color: #24324f;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo-area h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-area p {
+            margin: 2px 0 0 0;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .select-period {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-process {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-process:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 24px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .kpi-card.green::after { background: var(--accent-green); }
+        .kpi-card.purple::after { background: var(--accent-purple); }
+        .kpi-card.red::after { background: var(--accent-red); }
+
+        .kpi-card h3 {
+            margin: 0 0 6px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .kpi-card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Dashboard tabs */
+        .tab-bar {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tables */
+        .table-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 14px 20px;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        tr:hover td {
+            background-color: var(--bg-card-hover);
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .mono {
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        /* Buttons & Badges */
+        .btn-action {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .badge-info {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--accent-purple);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-container {
+            background-color: white;
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3);
+        }
+
+        .modal-header {
+            background-color: #f1f5f9;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .modal-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            background: #f8fafc;
+            padding: 0;
+        }
+
+        .modal-actions {
+            padding: 12px 20px;
+            background-color: #f1f5f9;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Lsd files list */
+        .lsd-box {
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 12px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            color: #10b981;
+            font-size: 11px;
+            max-height: 200px;
+        }
+
+        /* Loading animation */
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* SweetAlert2 Custom Styling */
+        .swal-custom-popup {
+            background-color: var(--bg-card) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 16px !important;
+            color: var(--text-main) !important;
+            font-family: 'Outfit', sans-serif !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        }
+        .swal-custom-title {
+            color: var(--text-main) !important;
+        }
+        .swal-custom-confirm-btn {
+            background: var(--primary-gradient) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 24px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            margin: 5px !important;
+            transition: all 0.2s ease !important;
+        }
+        .swal-custom-confirm-btn:hover {
+            opacity: 0.9 !important;
+            transform: translateY(-1px) !important;
+        }
+        .swal-custom-cancel-btn {
+            background-color: transparent !important;
+            color: var(--text-muted) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 8px !important;
+            padding: 10px 24px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            margin: 5px !important;
+            transition: all 0.2s ease !important;
+        }
+        .swal-custom-cancel-btn:hover {
+            background-color: var(--bg-card-hover) !important;
+            color: var(--text-main) !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h1>Consorcios Automa</h1>
+            <p>Panel de Control y Simulación Local</p>
+        </div>
+        <div class="header-controls">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>API Online (Port 5000)</span>
+            </div>
+            <select id="consorcio-selector" class="select-period" style="max-width: 250px;" onchange="processData()">
+                <option value="">Cargando consorcios...</option>
+            </select>
+            <button class="btn-action" style="background-color: var(--accent-purple); border-color: var(--accent-purple); color: white; padding: 8px 12px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px;" onclick="topCreateConsorcio()">
+                <span>➕ Nuevo Consorcio</span>
+            </button>
+            <select id="period-selector" class="select-period" onchange="processData()">
+                <option value="2026-06">Junio 2026</option>
+                <option value="2026-05" selected>Mayo 2026</option>
+                <option value="2026-04">Abril 2026</option>
+            </select>
+            <button class="btn-process" onclick="processData()">
+                <span>⚡ Procesar Planillas</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <!-- KPI Area -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <h3>Total Sueldos Netos</h3>
+                <p id="kpi-sueldos">$ 0.00</p>
+            </div>
+            <div class="kpi-card purple">
+                <h3>AFIP F.931 Estimado</h3>
+                <p id="kpi-afip">$ 0.00</p>
+            </div>
+            <div class="kpi-card green">
+                <h3>Total Prorrateo Expensas</h3>
+                <p id="kpi-prorrateo">$ 0.00</p>
+            </div>
+            <div class="kpi-card red">
+                <h3>Saldo Caja al Cierre</h3>
+                <p id="kpi-caja">$ 0.00</p>
+            </div>
+        </div>
+
+        <!-- Tab selection -->
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab(event, 'payroll-tab')">Sueldos y Recibos</button>
+            <button class="tab-btn" onclick="switchTab(event, 'afip-tab')">Libro Sueldos AFIP</button>
+            <button class="tab-btn" onclick="switchTab(event, 'expenses-tab')">Expensas (Prorrateo)</button>
+            <button class="tab-btn" onclick="switchTab(event, 'details-tab')">Liquidación Detallada</button>
+            <button class="tab-btn" onclick="switchTab(event, 'conciliation-tab')">Conciliación de Comprobantes</button>
+            <button class="tab-btn" onclick="switchTab(event, 'config-tab')">Configuración</button>
+            <button class="tab-btn" onclick="switchTab(event, 'docs-tab')">Documentos y Escalas</button>
+        </div>
+
+        <!-- Tab 1: Payroll -->
+        <div id="payroll-tab" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-main);">Liquidación de Sueldos y Haberes</h2>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-muted);">
+                    <input type="checkbox" id="sac-separate-checkbox" onchange="toggleSacSeparate(this.checked)" style="width: 16px; height: 16px; cursor: pointer;">
+                    Generar Recibo de SAC por Separado
+                </label>
+            </div>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Legajo</th>
+                            <th>Empleado</th>
+                            <th>Función</th>
+                            <th style="width: 70px;">Días Trab.</th>
+                            <th style="width: 70px;">Hs. 50%</th>
+                            <th style="width: 70px;">Hs. 100%</th>
+                            <th style="width: 70px;">Feriados</th>
+                            <th style="width: 80px;">Anticipo</th>
+                            <th class="text-right">Neto a Cobrar</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payroll-table-body">
+                        <tr>
+                            <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                Haz click en "Procesar Planillas" arriba a la derecha para cargar la información.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="payroll-save-container" style="display: none; justify-content: flex-end; margin-top: 16px;">
+                <button class="btn-process" onclick="saveNovedades()" style="background: var(--primary-gradient);">
+                    <span>💾 Guardar Novedades de Sueldos</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab 2: AFIP -->
+        <div id="afip-tab" class="tab-content">
+            <div id="afip-container">
+                <div class="table-card" style="padding: 20px; color: var(--text-muted); text-align: center;">
+                    Haz click en "Procesar Planillas" arriba a la derecha para generar los archivos AFIP LSD.
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Expenses -->
+        <div id="expenses-tab" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-main);">Listado de Expensas por Unidad</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-send-notifications" class="btn-action" style="background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); color: var(--primary); font-weight: 600; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="sendBuildingNotifications()">
+                        <span>✉ Enviar Avisos del Mes</span>
+                    </button>
+                    <button id="btn-print-all" class="btn-action" style="background-color: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2); color: var(--accent-purple); font-weight: 600; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="viewAllReceipts()">
+                        <span>🖨 Imprimir Todos los Avisos (Lote)</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Warning Banner for missing files -->
+            <div id="no-file-warning" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--accent-red); font-size: 13px; font-weight: 600;">Planilla de Expensas no Iniciada</h4>
+                        <p style="margin: 0; color: var(--text-muted); font-size: 12px;">No se encontró ningún archivo de expensas en el path de simulación para el período <strong id="warning-period-text"></strong>.</p>
+                    </div>
+                    <button class="btn-action" style="background-color: var(--accent-purple); border-color: var(--accent-purple); color: white;" onclick="openCreatePeriodModal()">
+                        <span>✨ Iniciar Período Nuevo</span>
+                    </button>
+                </div>
+            </div>
+ 
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>U.F.</th>
+                            <th>Depto</th>
+                            <th>Copropietario</th>
+                            <th class="text-right">Coef %</th>
+                            <th class="text-right">Expensas A</th>
+                            <th class="text-right">Deuda Anterior</th>
+                            <th class="text-right">Intereses</th>
+                            <th style="width: 110px;" class="text-right">Su Pago ($)</th>
+                            <th class="text-right">Total a Pagar</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses-table-body">
+                        <tr>
+                            <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                Haz click en "Procesar Planillas" arriba a la derecha para cargar la información.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="expenses-save-container" style="display: none; justify-content: flex-end; margin-top: 16px;">
+                <button class="btn-process" onclick="savePayments()" style="background: var(--accent-green); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                    <span>💾 Guardar Pagos de Propietarios</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab 4: Details -->
+        <div id="details-tab" class="tab-content">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <div>
+                    <!-- Form for Adding New Expense -->
+                    <div id="add-gasto-container" class="table-card" style="padding: 20px; margin-bottom: 20px; display: none;">
+                        <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 13px;">➕ Agregar Nuevo Gasto</div>
+                        <form id="add-gasto-form" onsubmit="addGasto(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) 90px; gap: 10px; align-items: flex-end;">
+                            <div>
+                                <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Categoría</label>
+                                <select id="gasto-category" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 11px; padding: 6px;" required>
+                                    <option value="2">2 - Servicios Públicos</option>
+                                    <option value="3">3 - Abonos de Servicios</option>
+                                    <option value="4">4 - Mantenimiento Común</option>
+                                    <option value="5">5 - Reparaciones en Unidades</option>
+                                    <option value="6">6 - Gastos Bancarios</option>
+                                    <option value="7">7 - Gastos de Limpieza</option>
+                                    <option value="8">8 - Gastos Administración</option>
+                                    <option value="9">9 - Seguros</option>
+                                    <option value="10" selected>10 - Otros Gastos</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Detalle / Concepto</label>
+                                <input type="text" id="gasto-description" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 11px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px;" placeholder="Ej: Ascensor abono mensual" required>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Monto ($)</label>
+                                <input type="number" step="0.01" id="gasto-amount" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 11px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px;" placeholder="0.00" required>
+                            </div>
+                            <div>
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Tipo</label>
+                                    <select id="gasto-type" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 11px; padding: 6px;" onchange="toggleTargetUfSelect()" required>
+                                        <option value="A" selected>Gasto A (Común)</option>
+                                        <option value="B">Gasto B (Extraord.)</option>
+                                        <option value="Particular">Particular</option>
+                                    </select>
+                                </div>
+                                <div id="target-uf-container" style="display: none;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Destinatario UF</label>
+                                    <select id="gasto-target-uf" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 11px; padding: 6px;">
+                                        <!-- Dynamic -->
+                                    </select>
+                                </div>
+                                <div style="grid-column: 1 / -1; display: flex; gap: 16px; align-items: center; margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <input type="checkbox" id="gasto-is-installment" onchange="toggleGastoInstallmentFields(this.checked)" style="width: 15px; height: 15px; cursor: pointer;">
+                                        <label for="gasto-is-installment" style="font-size: 11px; color: var(--text-main); cursor: pointer; user-select: none;">¿Es en cuotas?</label>
+                                    </div>
+                                    <div id="gasto-installment-fields" style="display: none; gap: 12px; align-items: center;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <label style="font-size: 11px; color: var(--text-muted);">Cuota Inicial:</label>
+                                            <input type="number" id="gasto-currentInstallment" value="1" min="1" style="width: 50px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px; border-radius: 4px; font-size: 11px; text-align: center;">
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <label style="font-size: 11px; color: var(--text-muted);">de un total de:</label>
+                                            <input type="number" id="gasto-totalInstallments" value="9" min="1" style="width: 50px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px; border-radius: 4px; font-size: 11px; text-align: center;">
+                                        </div>
+                                    </div>
+                                </div>
+                            <button type="submit" class="btn-process" style="width: 100%; justify-content: center; height: 32px; padding: 0; font-size: 11px;">
+                                <span>Agregar</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="table-card">
+                        <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid var(--border-color);">Ítems Liquidados del Período</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cat</th>
+                                    <th>Detalle del Gasto</th>
+                                    <th class="text-right">Monto ($)</th>
+                                    <th class="text-right">Tipo</th>
+                                    <th class="text-right" style="width: 80px;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="details-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                        Ningún ítem cargado.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Caja Inicial Editor -->
+                    <div id="caja-inicial-container" class="table-card" style="padding: 20px; display: none;">
+                        <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 13px;">💰 Caja Inicial del Período</div>
+                        <div style="display: flex; gap: 10px; align-items: flex-end;">
+                            <div style="flex-grow: 1;">
+                                <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Saldo Inicial ($)</label>
+                                <input type="number" step="0.01" id="caja-saldo-anterior" style="width: 100%; box-sizing: border-box; font-family: inherit; font-size: 11px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px;" placeholder="0.00">
+                            </div>
+                            <button class="btn-action" style="height: 32px; padding: 0 12px; font-size: 11px; font-weight: 600;" onclick="saveCajaInicial()">Guardar</button>
+                        </div>
+                    </div>
+                    <div class="table-card" style="padding: 20px;">
+                        <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Previsiones y Fondos</div>
+                        <div id="previsiones-container" style="color: var(--text-muted);">
+                            No hay previsiones cargadas.
+                        </div>
+                    </div>
+                    <div class="table-card" style="padding: 20px;">
+                        <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Conciliación Bancaria</div>
+                        <div id="bank-reconcil-container" style="color: var(--text-muted); font-family: monospace; font-size: 11px;">
+                            No hay conciliación bancaria.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Conciliación de Comprobantes -->
+        <div id="conciliation-tab" class="tab-content">
+            <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 20px;">
+                <div>
+                    <div class="table-card">
+                        <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <span>📥 Bandeja de Comprobantes Pendientes</span>
+                            <button class="btn-action" onclick="loadPendingPayments()" style="padding: 4px 8px; font-size: 11px;">🔄 Actualizar</button>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Remitente</th>
+                                        <th>Asunto / Adjunto</th>
+                                        <th class="text-right">Monto</th>
+                                        <th>Asignación Propuesta</th>
+                                        <th class="text-right" style="width: 250px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pending-payments-body">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                            No hay comprobantes pendientes en la cola de conciliación bancaria.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <!-- Simulator Card -->
+                    <div class="table-card" style="padding: 20px;">
+                        <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 13px;">📧 Simulador de Ingesta de Correo</div>
+                        <form id="simulate-email-form" onsubmit="simulateEmailIngestion(event)">
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Correo Remitente (De:)</label>
+                                <input type="email" id="sim-sender" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" placeholder="vecino_uf4@ejemplo.com" required>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Asunto</label>
+                                <input type="text" id="sim-subject" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" placeholder="Comprobante de Pago Expensas UF 4" required>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Cuerpo del Mensaje</label>
+                                <textarea id="sim-body" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px; height: 80px; font-family: inherit;" placeholder="Hola Kari, te paso la transferencia por el total del mes de $45.300. Saludos!"></textarea>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Archivo Adjunto (Simulado)</label>
+                                <input type="text" id="sim-attachment" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" placeholder="comprobante_galicia_UF4.pdf">
+                            </div>
+                            <button type="submit" class="btn-process" style="width: 100%; justify-content: center; background: var(--primary-gradient);">
+                                <span>📧 Simular Envío de Mail</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 6: Configuración de Consorcios y Empleados -->
+        <div id="config-tab" class="tab-content">
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <button class="btn-action" id="btn-subtab-consorcios" onclick="switchConfigSubtab('consorcios')" style="background-color: var(--primary); color: white;">🏢 Consorcios y Unidades</button>
+                <button class="btn-action" id="btn-subtab-employees" onclick="switchConfigSubtab('employees')">👥 Empleados</button>
+            </div>
+
+            <!-- Subtab 1: Consorcios -->
+            <div id="subtab-consorcios-container">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                    <div>
+                        <!-- Consorcio Form -->
+                        <div class="table-card" style="padding: 20px; margin-bottom: 20px;">
+                            <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 14px;" id="config-consorcio-title">Configuración del Consorcio</div>
+                            <form id="config-consorcio-form" onsubmit="saveConfigConsorcio(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Nombre del Consorcio</label>
+                                    <input type="text" id="cfg-name" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">CUIT</label>
+                                    <input type="text" id="cfg-cuit" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Clave SUTERH</label>
+                                    <input type="text" id="cfg-suterhKey" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Tasa de Interés por Mora (Mensual, ej: 0.03 para 3%)</label>
+                                    <input type="number" step="0.001" id="cfg-interest" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Día de Vencimiento Expensas (Día del mes)</label>
+                                    <input type="number" id="cfg-dueDay" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Banco de Depósito</label>
+                                    <input type="text" id="cfg-bankName" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Titular Cuenta Bancaria</label>
+                                    <input type="text" id="cfg-bankTitular" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Número de Cuenta</label>
+                                    <input type="text" id="cfg-bankAccount" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">CBU Cuenta Bancaria</label>
+                                    <input type="text" id="cfg-cbu" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Alias CBU</label>
+                                    <input type="text" id="cfg-alias" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Categoría Edificio</label>
+                                    <select id="cfg-category" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="1° Cat.">1° Categoría</option>
+                                        <option value="2° Cat.">2° Categoría</option>
+                                        <option value="3° Cat.">3° Categoría</option>
+                                        <option value="4° Cat.">4° Categoría</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Zona Desfavorable (SI/NO)</label>
+                                    <select id="cfg-zonaDesfavorable" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Tiene Cochera (SI/NO)</label>
+                                    <select id="cfg-cochera" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Tiene Jardín (SI/NO)</label>
+                                    <select id="cfg-jardin" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Tiene Pileta (SI/NO)</label>
+                                    <select id="cfg-pileta" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Movimiento de Coches (SI/NO)</label>
+                                    <select id="cfg-movimientoCoches" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Tiene Caldera (SI/NO)</label>
+                                    <select id="cfg-caldera" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Alícuota ART (% Variable, ej: 0.03 para 3%)</label>
+                                    <input type="number" step="0.0001" id="cfg-artRate" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" placeholder="0.03">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">SCVO Fijo ($ Seguro Vida Fijo)</label>
+                                    <input type="number" step="0.01" id="cfg-scvoFijo" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" placeholder="424.62">
+                                </div>
+                                <div style="grid-column: span 2; display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <button type="button" class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red);" id="btn-delete-consorcio" onclick="deleteConfigConsorcio()">🗑 Eliminar Consorcio</button>
+                                    <button type="submit" class="btn-process">💾 Guardar Cambios Consorcio</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Units Management -->
+                        <div class="table-card" style="padding: 20px;">
+                            <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 14px;">Administración de Unidades Funcionales (UFs)</div>
+                            <div style="margin-bottom: 16px; max-height: 300px; overflow-y: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>UF</th>
+                                            <th>Dpto</th>
+                                            <th>Copropietario</th>
+                                            <th>Coef A %</th>
+                                            <th>Coef B %</th>
+                                            <th>Email</th>
+                                            <th>WhatsApp</th>
+                                            <th style="width: 80px;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="config-units-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <form id="add-unit-form" onsubmit="addConfigUnit(event)" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                                <div style="width: 60px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">UF</label>
+                                    <input type="number" id="add-uf-num" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;" required>
+                                </div>
+                                <div style="width: 60px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Depto</label>
+                                    <input type="text" id="add-uf-depto" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;" required>
+                                </div>
+                                <div style="flex: 1.5; min-width: 120px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Copropietario</label>
+                                    <input type="text" id="add-uf-name" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;" required>
+                                </div>
+                                <div style="width: 80px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Coef A %</label>
+                                    <input type="number" step="0.0001" id="add-uf-coefA" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;" required>
+                                </div>
+                                <div style="width: 80px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Coef B %</label>
+                                    <input type="number" step="0.0001" id="add-uf-coefB" value="0" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;" required>
+                                </div>
+                                <div style="flex: 1.5; min-width: 120px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Email</label>
+                                    <input type="email" id="add-uf-email" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;">
+                                </div>
+                                <div style="flex: 1.2; min-width: 100px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">WhatsApp</label>
+                                    <input type="text" id="add-uf-phone" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 11px;">
+                                </div>
+                                <button type="submit" class="btn-process" style="height: 28px; padding: 0 12px; font-size: 11px; background: var(--accent-green);">
+                                    <span>Agregar</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Recurring Expenses Management -->
+                        <div class="table-card" style="padding: 20px; margin-top: 20px;">
+                            <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 14px;">Administración de Gastos Recurrentes y Financiamiento en Cuotas</div>
+                            <div style="margin-bottom: 16px; max-height: 250px; overflow-y: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Categoría</th>
+                                            <th>Concepto / Detalle</th>
+                                            <th class="text-right">Monto</th>
+                                            <th>Tipo</th>
+                                            <th>Cuotas / Recurrente</th>
+                                            <th style="width: 80px;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="config-recurring-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <form id="add-recurring-form" onsubmit="addConfigRecurringExpense(event)" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                                <div style="flex: 1.2; min-width: 130px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Categoría</label>
+                                    <select id="add-rec-category" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 11px; padding: 6px; height: 32px;" required>
+                                        <option value="2">2 - Servicios Públicos</option>
+                                        <option value="3">3 - Abonos de Servicios</option>
+                                        <option value="4">4 - Mantenimiento Común</option>
+                                        <option value="5">5 - Reparaciones en Unidades</option>
+                                        <option value="6">6 - Gastos Bancarios</option>
+                                        <option value="7">7 - Gastos de Limpieza</option>
+                                        <option value="8">8 - Gastos Administración</option>
+                                        <option value="9">9 - Seguros</option>
+                                        <option value="10" selected>10 - Otros Gastos</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 2; min-width: 180px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Concepto / Descripción</label>
+                                    <input type="text" id="add-rec-description" placeholder="Ej: Abono Ascensores mensual" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px; font-size: 11px; height: 32px;" required>
+                                </div>
+                                <div style="width: 95px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Monto ($)</label>
+                                    <input type="number" step="0.01" id="add-rec-amount" placeholder="0.00" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px; font-size: 11px; height: 32px;" required>
+                                </div>
+                                <div style="width: 95px;">
+                                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Tipo</label>
+                                    <select id="add-rec-type" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 11px; padding: 6px; height: 32px;" required>
+                                        <option value="A" selected>Gasto A (Común)</option>
+                                        <option value="B">Gasto B (Extraord.)</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; height: 32px; padding-bottom: 4px; gap: 6px; margin-right: 8px;">
+                                    <input type="checkbox" id="add-rec-isInstallment" onchange="toggleInstallmentFields(this.checked)" style="width: 15px; height: 15px; cursor: pointer;">
+                                    <label for="add-rec-isInstallment" style="font-size: 11px; color: var(--text-main); cursor: pointer; user-select: none;">¿Es en cuotas?</label>
+                                </div>
+                                <div id="rec-installment-fields" style="display: none; gap: 8px; align-items: flex-end;">
+                                    <div style="width: 70px;">
+                                        <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Cuota Inicial</label>
+                                        <input type="number" id="add-rec-currentInstallment" value="1" min="1" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px; font-size: 11px; height: 32px;">
+                                    </div>
+                                    <div style="width: 70px;">
+                                        <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Total Cuotas</label>
+                                        <input type="number" id="add-rec-totalInstallments" value="9" min="1" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 7px 10px; border-radius: 6px; font-size: 11px; height: 32px;">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-process" style="height: 32px; padding: 0 16px; font-size: 11px; background: var(--accent-purple);">
+                                    <span>Agregar</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subtab 2: Employees -->
+            <div id="subtab-employees-container" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px;">
+                    <div>
+                        <!-- Employee list selector card -->
+                        <div class="table-card" style="padding: 16px;">
+                            <div style="font-weight: 700; margin-bottom: 12px; font-size: 13px;">👥 Lista de Empleados</div>
+                            <div id="config-employees-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                                <!-- Dynamic selector links -->
+                            </div>
+                            <button class="btn-process" onclick="initNewEmployee()" style="width: 100%; justify-content: center; background: var(--accent-purple); font-size: 12px; padding: 8px 12px; margin-top: 12px; box-shadow: none;">
+                                <span>➕ Registrar Empleado Nuevo</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <!-- Employee Form -->
+                        <div class="table-card" style="padding: 20px;">
+                            <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 14px;" id="config-employee-title">Ficha de Empleado</div>
+                            <form id="config-employee-form" onsubmit="saveConfigEmployee(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">CUIL (Sin guiones)</label>
+                                    <input type="text" id="emp-cuil" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Apellido y Nombre</label>
+                                    <input type="text" id="emp-name" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">CUIT Empleador (Consorcio)</label>
+                                    <select id="emp-cuitEmployer" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;" required>
+                                        <!-- Dynamic buildings list -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Fecha de Ingreso (AAAA-MM-DD)</label>
+                                    <input type="date" id="emp-hireDate" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Categoría (ej: 1, 2, 3 o 4)</label>
+                                    <select id="emp-category" class="select-period" style="width: 100%; box-sizing: border-box; font-size: 12px;" required>
+                                        <option value="1">1° Categoría</option>
+                                        <option value="2">2° Categoría</option>
+                                        <option value="3">3° Categoría</option>
+                                        <option value="4">4° Categoría</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Función / Cargo</label>
+                                    <input type="text" id="emp-function" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;" placeholder="Ej: Encargado Permanente" required>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Banco de Depósito Sueldo</label>
+                                    <input type="text" id="emp-bank" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">CBU Empleado</label>
+                                    <input type="text" id="emp-cbu" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 6px; font-size: 12px;">
+                                </div>
+                                <div style="grid-column: span 2; margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 12px; margin-bottom: 8px;">
+                                    <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Pluses y Adicionales Asignados (Convenio SUTERH)</label>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+                                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; color: var(--text-main);">
+                                            <input type="checkbox" id="emp-plusJardin" style="width: 15px; height: 15px; cursor: pointer;"> Plus Jardinería
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; color: var(--text-main);">
+                                            <input type="checkbox" id="emp-plusPileta" style="width: 15px; height: 15px; cursor: pointer;"> Plus Limpieza Pileta
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; color: var(--text-main);">
+                                            <input type="checkbox" id="emp-plusCochera" style="width: 15px; height: 15px; cursor: pointer;"> Plus Limpieza Cochera
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; color: var(--text-main);">
+                                            <input type="checkbox" id="emp-plusMovimientoCoches" style="width: 15px; height: 15px; cursor: pointer;"> Plus Movimiento Coches
+                                        </label>
+                                    </div>
+                                </div>
+                                <div style="grid-column: span 2; display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <button type="button" class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red);" id="btn-delete-employee" onclick="deleteConfigEmployee()">🗑 Eliminar Empleado</button>
+                                    <button type="submit" class="btn-process">💾 Guardar Cambios Empleado</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 7: Documentos y Escalas -->
+    <div id="docs-tab" class="tab-content">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+            <!-- Left: Files list -->
+            <div>
+                <div class="table-card" style="padding: 20px; margin-bottom: 20px;">
+                    <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 14px;">📁 Archivos de Insumo y Registro</div>
+                    <div id="docs-files-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Dynamic files list -->
+                    </div>
+                </div>
+                
+                <div class="table-card" style="padding: 20px;">
+                    <div style="font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 14px;">ℹ️ Información de la Planilla</div>
+                    <div id="docs-info-details" style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                        <!-- Dynamic scale metadata -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Suterh Scales -->
+            <div>
+                <div class="table-card" style="margin-bottom: 20px;">
+                    <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                        <span>📊 Salarios Básicos SUTERH (Convenio)</span>
+                        <span id="docs-scales-period" class="badge-info"></span>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Función / Categoría Empleado</th>
+                                    <th class="text-right">1° Cat</th>
+                                    <th class="text-right">2° Cat</th>
+                                    <th class="text-right">3° Cat</th>
+                                    <th class="text-right">4° Cat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="docs-salaries-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid var(--border-color);">➕ Adicionales y Pluses SUTERH</div>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Concepto Adicional</th>
+                                    <th class="text-right">Valor / Porcentaje</th>
+                                </tr>
+                            </thead>
+                            <tbody id="docs-additionals-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Modal for PDF Preview -->
+    <div id="pdf-modal" class="modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modal-title">Vista Previa del Documento</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Raw HTML document gets injected here -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn-action" onclick="printModalDocument()">🖨 Imprimir</button>
+                <button class="btn-action" style="background-color: #64748b; border-color: #cbd5e1; color: white;" onclick="closeModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Validation Errors -->
+    <div id="validation-modal" class="modal">
+        <div class="modal-container" style="max-width: 500px; height: auto; max-height: 80vh;">
+            <div class="modal-header" style="background-color: var(--accent-red); color: white;">
+                <h3 style="margin: 0; color: white; font-weight: 700; font-size: 14px;">❌ Validación Incompleta - Generación Bloqueada</h3>
+                <button class="modal-close" style="color: white;" onclick="closeValidationModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px; background: var(--bg-main);">
+                <p style="margin: 0 0 16px 0; font-size: 12px; color: var(--text-main); font-weight: 500;">Se detectaron datos obligatorios faltantes o inconsistentes que impiden la generación de los documentos:</p>
+                <ul id="validation-errors-list" style="margin: 0; padding-left: 20px; color: #f87171; font-size: 11px; line-height: 1.6;">
+                    <!-- Dynamic errors list -->
+                </ul>
+            </div>
+            <div class="modal-actions" style="background-color: var(--bg-card); border-top: 1px solid var(--border-color);">
+                <button class="btn-action" style="background-color: var(--primary); border-color: var(--primary); color: white; font-weight: 600;" onclick="closeValidationModal()">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Creating/Initiating New Month -->
+    <div id="initiate-modal" class="modal">
+        <div class="modal-container" style="max-width: 450px; height: auto; max-height: 80vh;">
+            <div class="modal-header">
+                <h3>✨ Iniciar Período Nuevo</h3>
+                <button class="modal-close" onclick="closeInitiateModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px; background: var(--bg-main);">
+                <p style="margin: 0 0 16px 0; font-size: 12px; color: var(--text-muted);">
+                    Iniciará la planilla para el mes seleccionado arrastrando los saldos pendientes y saldo de caja del período anterior.
+                </p>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 6px;">Período Nuevo a Crear</label>
+                    <input type="text" id="initiate-new-period" class="select-period" style="width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px;" readonly>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 6px;">Período Anterior para Saldos</label>
+                    <select id="initiate-prev-period" class="select-period" style="width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px;">
+                        <option value="2026-05" selected>Mayo 2026</option>
+                        <option value="2026-04">Abril 2026</option>
+                        <option value="2026-03">Marzo 2026</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-process" onclick="submitInitiatePeriod()">
+                    <span>Confirmar e Iniciar</span>
+                </button>
+                <button class="btn-action" style="background-color: #64748b; border-color: #cbd5e1; color: white;" onclick="closeInitiateModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="spinner"></div>
+        <p style="font-weight: 600; font-size: 14px;">Calculando liquidaciones y generando documentos...</p>
+    </div>
+
+    <script>
+        // SweetAlert2 Custom Helpers
+        function showToast(message, type = 'success') {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: 'var(--bg-card)',
+                color: 'var(--text-main)',
+                iconColor: type === 'success' ? 'var(--accent-green)' : (type === 'error' ? 'var(--accent-red)' : 'var(--primary)'),
+                customClass: {
+                    popup: 'swal-custom-popup'
+                },
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+            Toast.fire({
+                icon: type,
+                title: message
+            });
+        }
+
+        function showAlert(title, text, type = 'info') {
+            return Swal.fire({
+                title: title,
+                text: text,
+                icon: type,
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm-btn',
+                    cancelButton: 'swal-custom-cancel-btn'
+                },
+                buttonsStyling: false
+            });
+        }
+
+        function showConfirm(title, text, confirmText = 'Sí, continuar', cancelText = 'Cancelar') {
+            return Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: confirmText,
+                cancelButtonText: cancelText,
+                customClass: {
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm-btn',
+                    cancelButton: 'swal-custom-cancel-btn'
+                },
+                buttonsStyling: false
+            });
+        }
+
+        let payrollData = [];
+        let expensesData = {};
+        let consorciosList = [];
+
+        function switchTab(evt, tabId) {
+            const tabs = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            const tabBtns = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove('active');
+            }
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+
+            if (tabId === 'conciliation-tab') {
+                loadPendingPayments();
+            } else if (tabId === 'config-tab') {
+                loadConfigTab();
+            } else if (tabId === 'docs-tab') {
+                renderDocumentationTab();
+            }
+        }
+
+        // Format currency helper
+        function formatMoney(num) {
+            return '$ ' + Number(num || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        async function loadConsorcios() {
+            try {
+                const response = await fetch('/api/consorcios');
+                if (!response.ok) {
+                    throw new Error('Error al cargar la lista de consorcios');
+                }
+                const list = await response.json();
+                consorciosList = list;
+                const selector = document.getElementById('consorcio-selector');
+                selector.innerHTML = '';
+                
+                let selectIdx = 0;
+                list.forEach((c, idx) => {
+                    const option = document.createElement('option');
+                    option.value = c.cuit;
+                    option.innerText = c.name;
+                    if (c.cuit === "30580260906" || c.name.toUpperCase().includes("URUGUAY")) {
+                        selectIdx = idx;
+                    }
+                    selector.appendChild(option);
+                });
+                if (list.length > 0) {
+                    selector.selectedIndex = selectIdx;
+                }
+            } catch (e) {
+                console.error(e);
+                const selector = document.getElementById('consorcio-selector');
+                selector.innerHTML = '<option value="30540887752">Arenales 2120 (Error)</option>';
+            }
+        }
+
+        async function processData() {
+            const period = document.getElementById('period-selector').value;
+            const cuit = document.getElementById('consorcio-selector').value || '';
+            
+            const configTab = document.getElementById('config-tab');
+            if (configTab && configTab.classList.contains('active')) {
+                loadConfigTab();
+            }
+            const docsTab = document.getElementById('docs-tab');
+            if (docsTab && docsTab.classList.contains('active')) {
+                renderDocumentationTab();
+            }
+
+            document.getElementById('loading').style.display = 'flex';
+
+            try {
+                // Fetch local data directly processed by the backend
+                const response = await fetch(`/api/process-local?period=${period}&cuit=${cuit}`);
+                if (!response.ok) {
+                    throw new Error('Error al procesar los archivos locales de Excel.');
+                }
+                const data = await response.json();
+                
+                payrollData = data.payroll.results;
+                expensesData = data.expenses;
+                documentationData = data.documentation || null;
+
+                // Sync SAC separate checkbox
+                const sacCheckbox = document.getElementById('sac-separate-checkbox');
+                if (sacCheckbox) {
+                    sacCheckbox.checked = !!expensesData.isSacSeparate;
+                }
+
+                // Update KPIs
+                const totalNet = payrollData.reduce((sum, p) => sum + p.netSalary, 0);
+                const totalF931 = payrollData.reduce((sum, p) => {
+                    const ob = p.concepts ? p.concepts.filter(c => ['5000', '5050', '5100'].includes(c.code)).reduce((s, c) => s + Math.abs(c.amount), 0) : 0;
+                    return sum + ob;
+                }, 0); // basic F931 retentions representation
+                
+                document.getElementById('kpi-sueldos').innerText = formatMoney(totalNet);
+                document.getElementById('kpi-afip').innerText = formatMoney(totalF931 || (expensesData.totalPagosAyB * 0.1));
+                document.getElementById('kpi-prorrateo').innerText = formatMoney(expensesData.totalProrrateoAyB);
+                document.getElementById('kpi-caja').innerText = formatMoney(expensesData.caja.saldoCierre);
+
+                // Populate Payroll Table
+                const payrollBody = document.getElementById('payroll-table-body');
+                payrollBody.innerHTML = '';
+                
+                const hasDb = expensesData.fileFound === true;
+
+                payrollData.forEach((p, idx) => {
+                    const row = document.createElement('tr');
+                    
+                    // Look up employee novedades to pre-fill inputs
+                    const nov = expensesData.novedades ? expensesData.novedades.find(n => String(n.cuil).trim() === String(p.cuil).trim()) : null;
+                    const dias = nov ? (nov.diasTrabajados !== undefined ? nov.diasTrabajados : 30) : 30;
+                    const hs50 = nov ? (nov.horasExtras50 || 0) : 0;
+                    const hs100 = nov ? (nov.horasExtras100 || 0) : 0;
+                    const feriados = nov ? (nov.feriados || 0) : 0;
+                    const anticipo = nov ? (nov.anticipo || 0) : 0;
+
+                    const inputStyle = `width: 50px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); text-align: center; border-radius: 4px; padding: 4px; font-family: inherit; font-size: 12px;`;
+                    
+                    row.innerHTML = `
+                        <td>${p.legajo}</td>
+                        <td><strong>${p.employeeName}</strong></td>
+                        <td>${p.function}</td>
+                        <td>
+                            <input type="number" class="nov-input nov-dias" data-cuil="${p.cuil}" value="${dias}" style="${inputStyle}" ${!hasDb ? 'disabled' : ''}>
+                        </td>
+                        <td>
+                            <input type="number" class="nov-input nov-hs50" data-cuil="${p.cuil}" value="${hs50}" style="${inputStyle}" ${!hasDb ? 'disabled' : ''}>
+                        </td>
+                        <td>
+                            <input type="number" class="nov-input nov-hs100" data-cuil="${p.cuil}" value="${hs100}" style="${inputStyle}" ${!hasDb ? 'disabled' : ''}>
+                        </td>
+                        <td>
+                            <input type="number" class="nov-input nov-feriados" data-cuil="${p.cuil}" value="${feriados}" style="${inputStyle}" ${!hasDb ? 'disabled' : ''}>
+                        </td>
+                        <td>
+                            <input type="number" class="nov-input nov-anticipo" data-cuil="${p.cuil}" value="${anticipo}" style="${inputStyle} width: 70px;" ${!hasDb ? 'disabled' : ''}>
+                        </td>
+                        <td class="text-right" style="font-weight: 600; color: var(--accent-green);">${formatMoney(p.netSalary)}</td>
+                        <td class="text-right">
+                            <button class="btn-action" onclick="viewPayslip(${idx})">👁 Ver Recibo</button>
+                        </td>
+                    `;
+                    payrollBody.appendChild(row);
+                });
+
+                // Populate AFIP Tab
+                const afipContainer = document.getElementById('afip-container');
+                afipContainer.innerHTML = '';
+                for (const [cuitVal, content] of Object.entries(data.payroll.lsdFiles)) {
+                    const div = document.createElement('div');
+                    div.style.marginBottom = '24px';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h3 style="margin: 0; font-size: 14px; color: var(--primary);">CUIT: ${cuitVal} - Libro Sueldos Digital</h3>
+                            <button class="btn-action" onclick="downloadTXT('${cuitVal}', \`${content.replace(/`/g, '\\`').replace(/\r\n/g, '\\r\\n')}\`)">📥 Descargar .TXT</button>
+                        </div>
+                        <div class="lsd-box">${content}</div>
+                    `;
+                    afipContainer.appendChild(div);
+                }
+
+                // Toggle warning banner & save button panels
+                const warningBanner = document.getElementById('no-file-warning');
+                const btnPrintAll = document.getElementById('btn-print-all');
+                
+                const payrollSaveContainer = document.getElementById('payroll-save-container');
+                const expensesSaveContainer = document.getElementById('expenses-save-container');
+                const addGastoContainer = document.getElementById('add-gasto-container');
+                const cajaInicialContainer = document.getElementById('caja-inicial-container');
+                
+                const expensesBody = document.getElementById('expenses-table-body');
+                expensesBody.innerHTML = '';
+
+                if (expensesData.fileFound === false) {
+                    warningBanner.style.display = 'block';
+                    document.getElementById('warning-period-text').innerText = period;
+                    if (btnPrintAll) btnPrintAll.style.display = 'none';
+                    
+                    payrollSaveContainer.style.display = 'none';
+                    expensesSaveContainer.style.display = 'none';
+                    addGastoContainer.style.display = 'none';
+                    cajaInicialContainer.style.display = 'none';
+
+                    expensesBody.innerHTML = `
+                        <tr>
+                            <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                La planilla de expensas para este mes todavía no ha sido creada. Haz clic en "Iniciar Período Nuevo" arriba para iniciar el mes.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    warningBanner.style.display = 'none';
+                    if (btnPrintAll) btnPrintAll.style.display = 'flex';
+                    
+                    payrollSaveContainer.style.display = 'flex';
+                    expensesSaveContainer.style.display = 'flex';
+                    addGastoContainer.style.display = 'block';
+                    cajaInicialContainer.style.display = 'block';
+
+                    expensesData.resCuenta.forEach((u, idx) => {
+                        const row = document.createElement('tr');
+                        row.id = `row-uf-${u.uf}`;
+                        
+                        const inputStyle = `width: 80px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); text-align: right; border-radius: 4px; padding: 4px; font-family: inherit; font-size: 12px; font-weight: 600;`;
+                        
+                        row.innerHTML = `
+                            <td>${u.uf}</td>
+                            <td>${u.depto}</td>
+                            <td><strong>${u.nombre}</strong></td>
+                            <td class="text-right">${u.coefA.toFixed(2)} %</td>
+                            <td class="text-right">${formatMoney(u.expensasA)}</td>
+                            <td class="text-right">${formatMoney(u.deuda)}</td>
+                            <td class="text-right">${formatMoney(u.intereses)}</td>
+                            <td class="text-right">
+                                <input type="number" class="pago-input" data-uf="${u.uf}" value="${u.suPago}" oninput="recalcRow(${u.uf}, this.value)" style="${inputStyle}">
+                            </td>
+                            <td class="row-total text-right" style="font-weight: 700; color: var(--primary);">${formatMoney(u.totalDue)}</td>
+                            <td class="text-right">
+                                <button class="btn-action" onclick="viewReceipt(${idx})">👁 Ver Aviso</button>
+                                <button class="btn-action" style="margin-left: 4px; background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); color: var(--accent-green);" onclick="sendUnitNotification(${u.uf})">✉ Enviar</button>
+                            </td>
+                        `;
+                        expensesBody.appendChild(row);
+                    });
+                    updateExpensesTableTotals();
+                }
+
+                // Populate Details
+                const detailsBody = document.getElementById('details-table-body');
+                detailsBody.innerHTML = '';
+                
+                // Show items categorized (Categories 2-10 for editable items)
+                let itemRendered = false;
+                for (let c = 1; c <= 10; c++) {
+                    const items = expensesData.categorizedItems[String(c)] || [];
+                    if (items.length === 0) continue;
+                    
+                    items.forEach(item => {
+                        itemRendered = true;
+                        const row = document.createElement('tr');
+                        
+                        // Find index of this item in expensesData.gastos to delete it
+                        const origIdx = expensesData.gastos ? expensesData.gastos.findIndex(g => g.description === item.description && String(g.category) === String(c) && g.amount === item.amount) : -1;
+                        
+                        row.innerHTML = `
+                            <td><span class="badge-info">${c}</span></td>
+                            <td class="item-desc">${item.description} ${item.type === 'Particular' ? `<span style="color: var(--accent-red); font-size: 11px;">(Particular UF ${item.targetUf || ''})</span>` : item.type === 'B' ? '<span style="color: var(--accent-purple); font-size: 11px;">(Extraord.)</span>' : ''}</td>
+                            <td class="text-right mono">${formatMoney(item.amount)}</td>
+                            <td class="text-right">${item.type === 'Particular' ? 'Particular' : item.type === 'B' ? 'B' : 'A'}</td>
+                            <td class="text-right">
+                                ${hasDb && c > 1 && origIdx !== -1 ? `
+                                    <button class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); padding: 4px 8px;" onclick="deleteGasto(${origIdx})">🗑 Borrar</button>
+                                ` : '<span style="color: var(--text-muted); font-size: 11px;">Fijo / Sueldo</span>'}
+                            </td>
+                        `;
+                        detailsBody.appendChild(row);
+                    });
+                }
+                
+                if (!itemRendered) {
+                    detailsBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                Ningún ítem cargado.
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                // Populate Caja Inicial Editor field
+                if (expensesData.caja) {
+                    document.getElementById('caja-saldo-anterior').value = expensesData.caja.saldoAnterior || 0;
+                }
+
+                // Populate Previsiones
+                const prevContainer = document.getElementById('previsiones-container');
+                prevContainer.innerHTML = '';
+                if (expensesData.previsionesItems && expensesData.previsionesItems.length > 0) {
+                    expensesData.previsionesItems.forEach(item => {
+                        const p = document.createElement('p');
+                        p.style.display = 'flex';
+                        p.style.justifyContent = 'space-between';
+                        p.style.fontSize = '12px';
+                        p.innerHTML = `
+                            <span>${item.description}:</span>
+                            <strong style="${item.amount < 0 ? 'color: var(--accent-red)' : ''}">${formatMoney(item.amount)}</strong>
+                        `;
+                        prevContainer.appendChild(p);
+                    });
+                } else {
+                    prevContainer.innerHTML = 'No hay previsiones cargadas.';
+                }
+
+                // Populate Bank Reconciliation
+                const bankReconcilContainer = document.getElementById('bank-reconcil-container');
+                bankReconcilContainer.innerHTML = '';
+                if (expensesData.bankReconciliation && expensesData.bankReconciliation.length > 0) {
+                    expensesData.bankReconciliation.forEach(item => {
+                        const p = document.createElement('p');
+                        p.style.display = 'flex';
+                        p.style.justifyContent = 'space-between';
+                        p.style.fontSize = '11px';
+                        p.style.margin = '6px 0';
+                        
+                        let valStr = String(item.value);
+                        if (typeof item.value === 'number') {
+                            valStr = formatMoney(item.value);
+                        }
+                        
+                        p.innerHTML = `
+                            <span>${item.label}:</span>
+                            <strong>${valStr}</strong>
+                        `;
+                        bankReconcilContainer.appendChild(p);
+                    });
+                } else {
+                    bankReconcilContainer.innerHTML = 'No hay conciliación bancaria cargada.';
+                }
+
+            } catch (err) {
+                console.error(err);
+                showAlert('Error', 'Ocurrió un error al procesar la liquidación: ' + err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function updateExpensesTableTotals() {
+            let totalCoefA = 0;
+            let totalExpensasA = 0;
+            let totalDeuda = 0;
+            let totalIntereses = 0;
+            let totalSuPago = 0;
+            let totalDue = 0;
+
+            if (!expensesData || !expensesData.resCuenta) return;
+
+            expensesData.resCuenta.forEach(u => {
+                totalCoefA += u.coefA || 0;
+                totalExpensasA += u.expensasA || 0;
+                
+                const inputEl = document.querySelector(`.pago-input[data-uf="${u.uf}"]`);
+                const suPago = inputEl ? (parseFloat(inputEl.value) || 0) : (u.suPago || 0);
+                
+                const deuda = Math.round(((u.saldoAnterior || 0) - suPago + Number.EPSILON) * 100) / 100;
+                const interestRate = expensesData.consorcio.interestRate !== undefined ? expensesData.consorcio.interestRate : 0.03;
+                const intereses = deuda > 0 ? Math.round((deuda * interestRate + Number.EPSILON) * 100) / 100 : 0;
+                const totalDueRow = Math.round((u.totalMes + deuda + intereses + Number.EPSILON) * 100) / 100;
+
+                totalDeuda += deuda;
+                totalIntereses += intereses;
+                totalSuPago += suPago;
+                totalDue += totalDueRow;
+            });
+
+            let totalsRow = document.getElementById('expenses-table-totals');
+            if (!totalsRow) {
+                totalsRow = document.createElement('tr');
+                totalsRow.id = 'expenses-table-totals';
+                totalsRow.style.fontWeight = '700';
+                totalsRow.style.background = 'var(--bg-muted)';
+                totalsRow.style.borderTop = '2px solid var(--border-color)';
+                document.getElementById('expenses-table-body').appendChild(totalsRow);
+            }
+
+            totalsRow.innerHTML = `
+                <td colspan="3">TOTALES</td>
+                <td class="text-right">${totalCoefA.toFixed(2)} %</td>
+                <td class="text-right">${formatMoney(totalExpensasA)}</td>
+                <td class="text-right">${formatMoney(totalDeuda)}</td>
+                <td class="text-right">${formatMoney(totalIntereses)}</td>
+                <td class="text-right" style="padding-right: 15px;">${formatMoney(totalSuPago)}</td>
+                <td class="text-right" style="color: var(--primary);">${formatMoney(totalDue)}</td>
+                <td></td>
+            `;
+        }
+
+        // Live calculation in rows
+        function recalcRow(uf, val) {
+            const suPago = parseFloat(val) || 0;
+            const u = expensesData.resCuenta.find(item => item.uf === uf);
+            if (!u) return;
+            
+            const interestRate = expensesData.consorcio.interestRate !== undefined ? expensesData.consorcio.interestRate : 0.03;
+            const totalMes = u.totalMes;
+            const saldoAnterior = u.saldoAnterior;
+            
+            const deuda = Math.round((saldoAnterior - suPago + Number.EPSILON) * 100) / 100;
+            const intereses = deuda > 0 ? Math.round((deuda * interestRate + Number.EPSILON) * 100) / 100 : 0;
+            const totalDue = Math.round((totalMes + deuda + intereses + Number.EPSILON) * 100) / 100;
+            
+            const row = document.getElementById(`row-uf-${uf}`);
+            if (row) {
+                row.querySelector('.row-deuda').innerText = formatMoney(deuda);
+                row.querySelector('.row-intereses').innerText = formatMoney(intereses);
+                row.querySelector('.row-total').innerText = formatMoney(totalDue);
+            }
+            updateExpensesTableTotals();
+        }
+
+        // Save Novedades
+        async function saveNovedades() {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            
+            const novedades = [];
+            const rows = document.querySelectorAll('#payroll-table-body tr');
+            if (rows.length === 0 || rows[0].innerText.includes("procesar")) return;
+            
+            payrollData.forEach(p => {
+                const cuil = p.cuil;
+                const rowEl = document.querySelector(`.nov-dias[data-cuil="${cuil}"]`);
+                if (!rowEl) return;
+                
+                const diasTrabajados = parseFloat(document.querySelector(`.nov-dias[data-cuil="${cuil}"]`).value) || 0;
+                const horasExtras50 = parseFloat(document.querySelector(`.nov-hs50[data-cuil="${cuil}"]`).value) || 0;
+                const horasExtras100 = parseFloat(document.querySelector(`.nov-hs100[data-cuil="${cuil}"]`).value) || 0;
+                const feriados = parseFloat(document.querySelector(`.nov-feriados[data-cuil="${cuil}"]`).value) || 0;
+                const anticipo = parseFloat(document.querySelector(`.nov-anticipo[data-cuil="${cuil}"]`).value) || 0;
+                
+                novedades.push({
+                    cuil,
+                    diasTrabajados,
+                    horasExtras50,
+                    horasExtras100,
+                    feriados,
+                    anticipo
+                });
+            });
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/period/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, period, novedades })
+                });
+                if (!response.ok) throw new Error('Error al guardar las novedades');
+                showToast('¡Novedades guardadas!');
+                processData(); // reload
+            } catch (e) {
+                showAlert('Error', e.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Save Payments
+        async function savePayments() {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            
+            const payments = {};
+            const inputs = document.querySelectorAll('.pago-input');
+            inputs.forEach(inp => {
+                const uf = inp.getAttribute('data-uf');
+                payments[uf] = parseFloat(inp.value) || 0;
+            });
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/period/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, period, payments })
+                });
+                if (!response.ok) throw new Error('Error al guardar los pagos');
+                showToast('¡Pagos guardados!');
+                processData();
+            } catch (e) {
+                showAlert('Error', e.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function toggleGastoInstallmentFields(checked) {
+            const container = document.getElementById('gasto-installment-fields');
+            if (checked) {
+                container.style.display = 'flex';
+                document.getElementById('gasto-currentInstallment').required = true;
+                document.getElementById('gasto-totalInstallments').required = true;
+            } else {
+                container.style.display = 'none';
+                document.getElementById('gasto-currentInstallment').required = false;
+                document.getElementById('gasto-totalInstallments').required = false;
+            }
+        }
+
+        // Add Gasto
+        async function addGasto(e) {
+            e.preventDefault();
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            
+            const category = document.getElementById('gasto-category').value;
+            let description = document.getElementById('gasto-description').value.trim();
+            const amount = parseFloat(document.getElementById('gasto-amount').value) || 0;
+            const type = document.getElementById('gasto-type').value;
+            const targetUf = type === 'Particular' ? document.getElementById('gasto-target-uf').value : null;
+
+            const isInstallment = document.getElementById('gasto-is-installment').checked;
+            let currentInstallment = 1;
+            let totalInstallments = 9;
+            
+            if (isInstallment) {
+                currentInstallment = parseInt(document.getElementById('gasto-currentInstallment').value) || 1;
+                totalInstallments = parseInt(document.getElementById('gasto-totalInstallments').value) || 9;
+                description = `${description} (Cuota ${currentInstallment} de ${totalInstallments})`;
+            }
+
+            const newGasto = {
+                category,
+                description,
+                amount,
+                type
+            };
+            if (type === 'Particular' && targetUf) {
+                newGasto.targetUf = targetUf;
+            }
+
+            const gastos = [...(expensesData.gastos || []), newGasto];
+
+            const requestBody = { cuit, period, gastos };
+            if (isInstallment) {
+                requestBody.newRecurringExpenses = [{
+                    category,
+                    description: document.getElementById('gasto-description').value.trim(),
+                    amount,
+                    type,
+                    isInstallment: true,
+                    currentInstallment: currentInstallment + 1, // Start next period with current + 1
+                    totalInstallments
+                }];
+            }
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/period/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                if (!response.ok) throw new Error('Error al agregar el gasto');
+                
+                document.getElementById('gasto-description').value = '';
+                document.getElementById('gasto-amount').value = '';
+                document.getElementById('gasto-is-installment').checked = false;
+                toggleGastoInstallmentFields(false);
+                
+                showToast('¡Gasto agregado!');
+                processData();
+            } catch (err) {
+                showAlert('Error', err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Delete Gasto
+        async function deleteGasto(idx) {
+            showConfirm('¿Borrar gasto?', '¿Seguro que desea borrar este gasto?').then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                const cuit = document.getElementById('consorcio-selector').value;
+                const period = document.getElementById('period-selector').value;
+                
+                const gastos = (expensesData.gastos || []).filter((_, i) => i !== idx);
+
+                document.getElementById('loading').style.display = 'flex';
+                try {
+                    const response = await fetch('/api/db/period/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cuit, period, gastos })
+                    });
+                    if (!response.ok) throw new Error('Error al borrar el gasto');
+                    showToast('¡Gasto eliminado!');
+                    processData();
+                } catch (err) {
+                    showAlert('Error', err.message, 'error');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        // Save Caja Inicial
+        async function saveCajaInicial() {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            const saldoAnterior = parseFloat(document.getElementById('caja-saldo-anterior').value) || 0;
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/period/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, period, caja: { saldoAnterior } })
+                });
+                if (!response.ok) throw new Error('Error al guardar el saldo inicial de caja');
+                showToast('¡Saldo inicial guardado!');
+                processData();
+            } catch (e) {
+                showAlert('Error', e.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function toggleTargetUfSelect() {
+            const type = document.getElementById('gasto-type').value;
+            const container = document.getElementById('target-uf-container');
+            if (type === 'Particular') {
+                container.style.display = 'block';
+                const select = document.getElementById('gasto-target-uf');
+                select.innerHTML = '';
+                expensesData.resCuenta.forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u.uf;
+                    opt.innerText = `UF ${u.uf} - ${u.depto} (${u.nombre})`;
+                    select.appendChild(opt);
+                });
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        // Mandatory checks validation
+        function checkValidationErrors() {
+            const errors = [];
+            
+            // 1. Check building bank info
+            const bank = expensesData.consorcio.bankInfo || {};
+            if (!bank.bankName || bank.bankName.trim() === "") errors.push("Falta configurar el nombre del Banco del consorcio.");
+            if (!bank.accountNumber || bank.accountNumber.trim() === "") errors.push("Falta configurar el número de cuenta del consorcio.");
+            if (!bank.cbu || bank.cbu.trim() === "") errors.push("Falta configurar el CBU del consorcio.");
+            if (!bank.alias || bank.alias.trim() === "") errors.push("Falta configurar el Alias de transferencia del consorcio.");
+            
+            // 2. Check units details
+            if (!expensesData.resCuenta || expensesData.resCuenta.length === 0) {
+                errors.push("No hay unidades funcionales configuradas para este consorcio.");
+            } else {
+                let sumCoefA = 0;
+                expensesData.resCuenta.forEach(u => {
+                    sumCoefA += u.coefA || 0;
+                    if (!u.nombre || u.nombre.trim() === "" || u.nombre.toUpperCase() === "SIN NOMBRE") {
+                        errors.push(`La Unidad Funcional UF ${u.uf} no tiene asignado un copropietario.`);
+                    }
+                });
+                // Check sum of coefficients A is close to 100% (or 1.0 depending on divisor)
+                const divisorA = expensesData.consorcio.divisorA || 100;
+                const targetSum = divisorA === 1 ? 1.0 : 100.0;
+                if (Math.abs(sumCoefA - targetSum) > 0.05) {
+                    errors.push(`La suma de los coeficientes A de las unidades (${sumCoefA.toFixed(4)}) no coincide con el total esperado (${targetSum}).`);
+                }
+            }
+            
+            // 3. Check payroll employee data
+            if (!payrollData || payrollData.length === 0) {
+                errors.push("No hay empleados liquidados para este consorcio.");
+            } else {
+                payrollData.forEach(p => {
+                    if (!p.cbu || p.cbu.trim() === "") {
+                        errors.push(`El empleado ${p.employeeName} no tiene configurado su CBU.`);
+                    }
+                    if (!p.bank || p.bank.trim() === "") {
+                        errors.push(`El empleado ${p.employeeName} no tiene configurado su Banco de depósito.`);
+                    }
+                });
+            }
+
+            return errors;
+        }
+
+        function showValidationErrorsModal(errors) {
+            const list = document.getElementById('validation-errors-list');
+            list.innerHTML = '';
+            errors.forEach(err => {
+                const li = document.createElement('li');
+                li.style.marginBottom = '6px';
+                li.style.color = '#f87171'; // soft red text
+                li.innerText = err;
+                list.appendChild(li);
+            });
+            document.getElementById('validation-modal').style.display = 'flex';
+        }
+
+        function closeValidationModal() {
+            document.getElementById('validation-modal').style.display = 'none';
+        }
+
+        // Rollover Period initiation
+        function getPreviousPeriod(periodStr) {
+            const [year, month] = periodStr.split('-').map(Number);
+            let prevMonth = month - 1;
+            let prevYear = year;
+            if (prevMonth === 0) {
+                prevMonth = 12;
+                prevYear -= 1;
+            }
+            return `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
+        }
+
+        function openCreatePeriodModal() {
+            const newPeriod = document.getElementById('period-selector').value;
+            const prevPeriod = getPreviousPeriod(newPeriod);
+            
+            document.getElementById('initiate-new-period').value = newPeriod;
+            
+            const selectPrev = document.getElementById('initiate-prev-period');
+            selectPrev.innerHTML = '';
+            
+            // add some month options
+            const months = [prevPeriod, getPreviousPeriod(prevPeriod), getPreviousPeriod(getPreviousPeriod(prevPeriod))];
+            months.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.innerText = m;
+                selectPrev.appendChild(opt);
+            });
+            
+            document.getElementById('initiate-modal').style.display = 'flex';
+        }
+
+        function closeInitiateModal() {
+            document.getElementById('initiate-modal').style.display = 'none';
+        }
+
+        async function submitInitiatePeriod() {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('initiate-new-period').value;
+            const prevPeriod = document.getElementById('initiate-prev-period').value;
+            
+            closeInitiateModal();
+            document.getElementById('loading').style.display = 'flex';
+            
+            try {
+                const response = await fetch('/api/db/period/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, period, prevPeriod })
+                });
+                if (!response.ok) throw new Error('Error al iniciar el período');
+                showAlert('Período Iniciado', `¡Período ${period} iniciado correctamente con saldos de ${prevPeriod}!`, 'success');
+                processData();
+            } catch (e) {
+                showAlert('Error', e.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function viewPayslip(idx) {
+            const errors = checkValidationErrors();
+            if (errors.length > 0) {
+                showValidationErrorsModal(errors);
+                return;
+            }
+
+            const emp = payrollData[idx];
+            if (!emp) return;
+            
+            document.getElementById('modal-title').innerText = `Recibo de Haberes - ${emp.employeeName} (${emp.periodText})`;
+            const body = document.getElementById('modal-body');
+            body.innerHTML = '';
+            
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            body.appendChild(iframe);
+            
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(emp.payslipHtml);
+            doc.close();
+
+            document.getElementById('pdf-modal').style.display = 'flex';
+        }
+
+        function viewReceipt(idx) {
+            const errors = checkValidationErrors();
+            if (errors.length > 0) {
+                showValidationErrorsModal(errors);
+                return;
+            }
+
+            const u = expensesData.resCuenta[idx];
+            if (!u) return;
+            
+            document.getElementById('modal-title').innerText = `Aviso de Pago Expensas - UF ${u.uf} (${u.nombre})`;
+            const body = document.getElementById('modal-body');
+            body.innerHTML = '';
+            
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            body.appendChild(iframe);
+            
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(u.receiptHtml);
+            doc.close();
+
+            document.getElementById('pdf-modal').style.display = 'flex';
+        }
+
+        function viewAllReceipts() {
+            const errors = checkValidationErrors();
+            if (errors.length > 0) {
+                showValidationErrorsModal(errors);
+                return;
+            }
+
+            if (!expensesData.printAllHtml) {
+                showAlert('Atención', 'No hay datos de expensas procesados.', 'warning');
+                return;
+            }
+            
+            document.getElementById('modal-title').innerText = `Avisos de Pago - Todos los Copropietarios - Período ${expensesData.period}`;
+            const body = document.getElementById('modal-body');
+            body.innerHTML = '';
+            
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            body.appendChild(iframe);
+            
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(expensesData.printAllHtml);
+            doc.close();
+
+            document.getElementById('pdf-modal').style.display = 'flex';
+        }
+
+        function printModalDocument() {
+            const iframe = document.querySelector('#modal-body iframe');
+            if (iframe) {
+                iframe.contentWindow.print();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('pdf-modal').style.display = 'none';
+        }
+
+        function downloadTXT(cuit, content) {
+            const element = document.createElement('a');
+            const file = new Blob([content], {type: 'text/plain;charset=latin1'});
+            element.href = URL.createObjectURL(file);
+            element.download = `afip_lsd_${cuit}.txt`;
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        // Notification send helpers
+        async function sendBuildingNotifications() {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            if (!cuit || !period) return;
+            
+            const errors = checkValidationErrors();
+            if (errors.length > 0) {
+                showValidationErrorsModal(errors);
+                return;
+            }
+
+            showConfirm('¿Enviar notificaciones?', `¿Desea enviar las notificaciones (Mail y WhatsApp) del período ${period} a todos los copropietarios?`, 'Sí, enviar', 'Cancelar').then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                document.getElementById('loading').style.display = 'flex';
+                try {
+                    const response = await fetch('/api/db/period/send-notifications', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cuit, period })
+                    });
+                    if (!response.ok) throw new Error('Error al enviar notificaciones');
+                    const resultData = await response.json();
+                    showAlert('Enviado con éxito', `¡Se enviaron con éxito ${resultData.sentCount} avisos del mes (simulados en la carpeta scratch)!`, 'success');
+                } catch (e) {
+                    showAlert('Error', e.message, 'error');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        async function sendUnitNotification(uf) {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            if (!cuit || !period || !uf) return;
+
+            const errors = checkValidationErrors();
+            if (errors.length > 0) {
+                showValidationErrorsModal(errors);
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/period/send-notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, period, uf })
+                });
+                if (!response.ok) throw new Error('Error al enviar notificación');
+                showToast(`¡Aviso enviado para la UF ${uf}!`);
+            } catch (e) {
+                showAlert('Error', e.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function toggleSacSeparate(checked) {
+            const cuit = document.getElementById('consorcio-selector').value;
+            const period = document.getElementById('period-selector').value;
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/period/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, period, isSacSeparate: checked })
+                });
+                if (!response.ok) throw new Error('Error al guardar configuración SAC');
+                processData(); // reload calculations
+            } catch (e) {
+                showAlert('Error', e.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // --- CONCILIATION LOGIC ---
+        async function loadPendingPayments() {
+            const cuit = document.getElementById('consorcio-selector').value || '';
+            const period = document.getElementById('period-selector').value;
+            const tbody = document.getElementById('pending-payments-body');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Cargando...</td></tr>';
+            
+            try {
+                const response = await fetch(`/api/db/payments/pending?cuit=${cuit}`);
+                if (!response.ok) throw new Error('Error al cargar pagos pendientes');
+                const list = await response.json();
+                
+                tbody.innerHTML = '';
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">No hay comprobantes pendientes en la cola de conciliación bancaria.</td></tr>';
+                    return;
+                }
+
+                // Fetch consorcio details to build CUIT & UF lists for correction override
+                const resBuilding = await fetch(`/api/db/consorcios/detail?cuit=${cuit}`);
+                const building = resBuilding.ok ? await resBuilding.json() : { units: [] };
+                
+                const responseAll = await fetch('/api/consorcios');
+                const consorciosList = responseAll.ok ? await responseAll.json() : [];
+
+                list.forEach(p => {
+                    const row = document.createElement('tr');
+                    
+                    // Build Building Selector override
+                    let bSelect = `<select class="select-period cfg-pay-cuit" style="font-size: 11px; padding: 4px; width: 150px;" onchange="updatePayUfDropdown(this, '${cuit}')">`;
+                    consorciosList.forEach(c => {
+                        const isSel = String(c.cuit).replace(/[^0-9]/g, '') === String(p.matched?.cuitConsorcio || '').replace(/[^0-9]/g, '');
+                        bSelect += `<option value="${c.cuit}" ${isSel ? 'selected' : ''}>${c.name}</option>`;
+                    });
+                    bSelect += `</select>`;
+
+                    // Build UF Selector override
+                    let ufSelect = `<select class="select-period cfg-pay-uf" style="font-size: 11px; padding: 4px; width: 100px;">`;
+                    building.units.forEach(u => {
+                        const isSel = Number(u.uf) === Number(p.matched?.uf);
+                        ufSelect += `<option value="${u.uf}" ${isSel ? 'selected' : ''}>UF ${u.uf} - ${u.depto}</option>`;
+                    });
+                    ufSelect += `</select>`;
+
+                    row.innerHTML = `
+                        <td>
+                            <strong style="color: var(--primary);">${p.sender}</strong><br>
+                            <span style="font-size: 10px; color: var(--text-muted);">${new Date(p.timestamp).toLocaleString('es-AR')}</span>
+                        </td>
+                        <td>
+                            <strong>${p.subject}</strong><br>
+                            <span style="font-size: 10px; color: var(--text-muted);">${p.attachmentName || 'Sin adjunto'}</span>
+                        </td>
+                        <td class="text-right">
+                            <input type="number" class="select-period cfg-pay-amount" style="font-size: 11px; padding: 4px; width: 80px; text-align: right;" value="${p.extracted.amount}"><br>
+                            <span style="font-size: 10px; color: var(--text-muted);">Fecha: ${p.extracted.date}</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Edif:</span> ${bSelect}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Unid:</span> ${ufSelect}
+                                </div>
+                                <span style="font-size: 10px; color: ${p.matched?.confidence === 'high' ? 'var(--accent-green)' : p.matched?.confidence === 'medium' ? 'var(--accent-purple)' : 'var(--accent-red)'}">
+                                    Conf: ${p.matched?.confidence.toUpperCase()} - ${p.matched?.reason}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            <button class="btn-action" style="background-color: var(--accent-green); border-color: var(--accent-green); color: white; margin-right: 4px;" onclick="approvePendingPayment('${p.id}', this)">✓ Aprobar</button>
+                            <button class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red);" onclick="rejectPendingPayment('${p.id}')">🗑</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--accent-red); padding: 20px;">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function updatePayUfDropdown(selectEl, currentCuit) {
+            const selectedCuit = selectEl.value;
+            const rowEl = selectEl.closest('tr');
+            const ufSelect = rowEl.querySelector('.cfg-pay-uf');
+            
+            try {
+                const resBuilding = await fetch(`/api/db/consorcios/detail?cuit=${selectedCuit}`);
+                if (resBuilding.ok) {
+                    const building = await resBuilding.json();
+                    ufSelect.innerHTML = '';
+                    building.units.forEach(u => {
+                        const opt = document.createElement('option');
+                        opt.value = u.uf;
+                        opt.innerText = `UF ${u.uf} - ${u.depto}`;
+                        ufSelect.appendChild(opt);
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function simulateEmailIngestion(e) {
+            e.preventDefault();
+            const sender = document.getElementById('sim-sender').value;
+            const subject = document.getElementById('sim-subject').value;
+            const body = document.getElementById('sim-body').value;
+            const attachmentName = document.getElementById('sim-attachment').value;
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/payments/ingest-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sender, subject, body, attachmentName })
+                });
+                if (!response.ok) throw new Error('Error al simular ingesta');
+                
+                showToast('¡Correo ingresado con éxito!');
+                document.getElementById('simulate-email-form').reset();
+                loadPendingPayments();
+            } catch (err) {
+                showAlert('Error', err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function approvePendingPayment(id, btnEl) {
+            const row = btnEl.closest('tr');
+            const cuit = row.querySelector('.cfg-pay-cuit').value;
+            const uf = row.querySelector('.cfg-pay-uf').value;
+            const amount = parseFloat(row.querySelector('.cfg-pay-amount').value) || 0;
+            const period = document.getElementById('period-selector').value;
+
+            if (amount <= 0) {
+                showAlert('Atención', 'Monto inválido.', 'warning');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/payments/approve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, period, cuit, uf, amount })
+                });
+                if (!response.ok) throw new Error('Error al aprobar pago');
+                showToast('¡Pago aprobado y cargado!');
+                loadPendingPayments();
+                processData(); // reload
+            } catch (err) {
+                showAlert('Error', err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function rejectPendingPayment(id) {
+            showConfirm('¿Descartar comprobante?', '¿Seguro que desea rechazar y descartar este comprobante?').then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                document.getElementById('loading').style.display = 'flex';
+                try {
+                    const response = await fetch('/api/db/payments/reject', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    if (!response.ok) throw new Error('Error al descartar comprobante');
+                    showToast('Comprobante descartado.');
+                    loadPendingPayments();
+                } catch (err) {
+                    showAlert('Error', err.message, 'error');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+
+        // --- CONFIGURATION TAB LOGIC ---
+        let currentEditingBuilding = null;
+        let currentEditingEmployee = null;
+
+        function switchConfigSubtab(tabName) {
+            document.getElementById('btn-subtab-consorcios').style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+            document.getElementById('btn-subtab-consorcios').style.color = 'var(--primary)';
+            document.getElementById('btn-subtab-employees').style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+            document.getElementById('btn-subtab-employees').style.color = 'var(--primary)';
+
+            document.getElementById(`btn-subtab-${tabName}`).style.backgroundColor = 'var(--primary)';
+            document.getElementById(`btn-subtab-${tabName}`).style.color = 'white';
+
+            if (tabName === 'consorcios') {
+                document.getElementById('subtab-consorcios-container').style.display = 'block';
+                document.getElementById('subtab-employees-container').style.display = 'none';
+            } else {
+                document.getElementById('subtab-consorcios-container').style.display = 'none';
+                document.getElementById('subtab-employees-container').style.display = 'block';
+                loadConfigEmployees();
+            }
+        }
+
+        async function loadConfigTab() {
+            const activeCuit = document.getElementById('consorcio-selector').value;
+            
+            const empEmployer = document.getElementById('emp-cuitEmployer');
+            empEmployer.innerHTML = '';
+            
+            const response = await fetch('/api/consorcios');
+            if (response.ok) {
+                const list = await response.json();
+                list.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.cuit;
+                    opt.innerText = c.name;
+                    empEmployer.appendChild(opt);
+                });
+            }
+
+            if (activeCuit) {
+                empEmployer.value = activeCuit;
+                const isConsorcioActive = document.getElementById('subtab-consorcios-container').style.display !== 'none';
+                if (isConsorcioActive) {
+                    loadConfigBuildingDetail();
+                } else {
+                    loadConfigEmployees();
+                }
+            }
+        }
+
+        async function loadConfigBuildingDetail() {
+            const cuit = document.getElementById('consorcio-selector').value;
+            if (!cuit) return;
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch(`/api/db/consorcios/detail?cuit=${cuit}`);
+                if (!response.ok) throw new Error('Error al cargar detalle del edificio');
+                const c = await response.json();
+                currentEditingBuilding = c;
+
+                document.getElementById('config-consorcio-title').innerText = `🏢 Configuración: ${c.name}`;
+                document.getElementById('cfg-name').value = c.name || '';
+                document.getElementById('cfg-cuit').value = c.cuit || '';
+                document.getElementById('cfg-cuit').readOnly = true;
+                document.getElementById('cfg-suterhKey').value = c.suterhKey || '';
+                document.getElementById('cfg-interest').value = c.interestRate !== undefined ? c.interestRate : 0.03;
+                document.getElementById('cfg-dueDay').value = c.dueDay !== undefined ? c.dueDay : 10;
+                document.getElementById('cfg-bankName').value = c.bankInfo?.bankName || '';
+                document.getElementById('cfg-bankTitular').value = c.bankInfo?.titular || '';
+                document.getElementById('cfg-bankAccount').value = c.bankInfo?.accountNumber || '';
+                document.getElementById('cfg-cbu').value = c.bankInfo?.cbu || '';
+                document.getElementById('cfg-alias').value = c.bankInfo?.alias || '';
+                document.getElementById('cfg-category').value = c.category || '1° Cat.';
+                document.getElementById('cfg-zonaDesfavorable').value = c.zonaDesfavorable || 'NO';
+                document.getElementById('cfg-cochera').value = c.cochera || 'NO';
+                document.getElementById('cfg-jardin').value = c.jardin || 'NO';
+                document.getElementById('cfg-pileta').value = c.pileta || 'NO';
+                document.getElementById('cfg-movimientoCoches').value = c.movimientoCoches || 'NO';
+                document.getElementById('cfg-caldera').value = c.caldera || 'NO';
+                document.getElementById('cfg-artRate').value = c.artRate !== undefined ? c.artRate : 0.03;
+                document.getElementById('cfg-scvoFijo').value = c.scvoFijo !== undefined ? c.scvoFijo : 424.62;
+
+                document.getElementById('btn-delete-consorcio').style.display = 'inline-block';
+
+                renderConfigUnitsTable();
+                renderConfigRecurringTable();
+            } catch (err) {
+                showAlert('Error', err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function initNewBuilding() {
+            currentEditingBuilding = {
+                name: '',
+                cuit: '',
+                suterhKey: '',
+                interestRate: 0.03,
+                dueDay: 10,
+                bankInfo: {},
+                units: []
+            };
+
+            document.getElementById('config-consorcio-title').innerText = `🏢 Nuevo Consorcio`;
+            document.getElementById('cfg-name').value = '';
+            document.getElementById('cfg-cuit').value = '';
+            document.getElementById('cfg-cuit').readOnly = false;
+            document.getElementById('cfg-suterhKey').value = '';
+            document.getElementById('cfg-interest').value = 0.03;
+            document.getElementById('cfg-dueDay').value = 10;
+            document.getElementById('cfg-bankName').value = '';
+            document.getElementById('cfg-bankTitular').value = '';
+            document.getElementById('cfg-bankAccount').value = '';
+            document.getElementById('cfg-cbu').value = '';
+            document.getElementById('cfg-alias').value = '';
+            document.getElementById('cfg-category').value = '1° Cat.';
+            document.getElementById('cfg-zonaDesfavorable').value = 'NO';
+            document.getElementById('cfg-cochera').value = 'NO';
+            document.getElementById('cfg-jardin').value = 'NO';
+            document.getElementById('cfg-pileta').value = 'NO';
+            document.getElementById('cfg-movimientoCoches').value = 'NO';
+            document.getElementById('cfg-caldera').value = 'NO';
+            document.getElementById('cfg-artRate').value = 0.03;
+            document.getElementById('cfg-scvoFijo').value = 424.62;
+
+            document.getElementById('btn-delete-consorcio').style.display = 'none';
+
+            currentEditingBuilding.recurringExpenses = [];
+            renderConfigUnitsTable();
+            renderConfigRecurringTable();
+        }
+
+        let editingUnitIndex = null;
+
+        function renderConfigUnitsTable() {
+            const tbody = document.getElementById('config-units-table-body');
+            tbody.innerHTML = '';
+            const units = currentEditingBuilding?.units || [];
+            
+            if (units.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 20px;">No hay unidades configuradas. Usa el formulario de abajo para agregar la primera.</td></tr>';
+                return;
+            }
+
+            units.forEach((u, index) => {
+                const row = document.createElement('tr');
+                if (editingUnitIndex === index) {
+                    row.innerHTML = `
+                        <td>UF ${u.uf}</td>
+                        <td>${u.depto}</td>
+                        <td>
+                            <input type="text" id="edit-uf-name-${index}" value="${u.nombre}" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px; border-radius: 4px; font-size: 11px;">
+                        </td>
+                        <td>${u.coefA.toFixed(4)} %</td>
+                        <td>${(u.coefB || 0).toFixed(4)} %</td>
+                        <td>
+                            <input type="email" id="edit-uf-email-${index}" value="${u.email || ''}" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px; border-radius: 4px; font-size: 11px;">
+                        </td>
+                        <td>
+                            <input type="text" id="edit-uf-phone-${index}" value="${u.phone || ''}" style="width: 100%; box-sizing: border-box; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px; border-radius: 4px; font-size: 11px;">
+                        </td>
+                        <td>
+                            <button class="btn-action" style="background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); color: var(--accent-green); padding: 4px 8px; margin-right: 4px;" onclick="saveConfigUnitEdit(${index})">💾</button>
+                            <button class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); padding: 4px 8px;" onclick="cancelConfigUnitEdit()">❌</button>
+                        </td>
+                    `;
+                } else {
+                    row.innerHTML = `
+                        <td>UF ${u.uf}</td>
+                        <td>${u.depto}</td>
+                        <td><strong>${u.nombre}</strong></td>
+                        <td>${u.coefA.toFixed(4)} %</td>
+                        <td>${(u.coefB || 0).toFixed(4)} %</td>
+                        <td>${u.email || '-'}</td>
+                        <td>${u.phone || '-'}</td>
+                        <td>
+                            <button class="btn-action" style="background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); color: var(--primary); padding: 4px 8px; margin-right: 4px;" onclick="startConfigUnitEdit(${index})">✏️</button>
+                            <button class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); padding: 4px 8px;" onclick="deleteConfigUnit(${index})">🗑</button>
+                        </td>
+                    `;
+                }
+                tbody.appendChild(row);
+            });
+        }
+
+        function startConfigUnitEdit(index) {
+            editingUnitIndex = index;
+            renderConfigUnitsTable();
+        }
+
+        function cancelConfigUnitEdit() {
+            editingUnitIndex = null;
+            renderConfigUnitsTable();
+        }
+
+        function saveConfigUnitEdit(index) {
+            const nameInput = document.getElementById(`edit-uf-name-${index}`);
+            const emailInput = document.getElementById(`edit-uf-email-${index}`);
+            const phoneInput = document.getElementById(`edit-uf-phone-${index}`);
+            
+            if (currentEditingBuilding && currentEditingBuilding.units && currentEditingBuilding.units[index]) {
+                currentEditingBuilding.units[index].nombre = nameInput.value.trim();
+                currentEditingBuilding.units[index].email = emailInput.value.trim();
+                currentEditingBuilding.units[index].phone = phoneInput.value.trim();
+            }
+            
+            editingUnitIndex = null;
+            renderConfigUnitsTable();
+        }
+
+        function addConfigUnit(e) {
+            e.preventDefault();
+            const uf = parseInt(document.getElementById('add-uf-num').value);
+            const depto = document.getElementById('add-uf-depto').value;
+            const nombre = document.getElementById('add-uf-name').value;
+            const coefA = parseFloat(document.getElementById('add-uf-coefA').value);
+            const coefB = parseFloat(document.getElementById('add-uf-coefB').value) || 0;
+            const email = document.getElementById('add-uf-email').value;
+            const phone = document.getElementById('add-uf-phone').value;
+
+            if (currentEditingBuilding.units.some(u => u.uf === uf)) {
+                showAlert('Atención', 'La UF ' + uf + ' ya está registrada.', 'warning');
+                return;
+            }
+
+            currentEditingBuilding.units.push({
+                uf,
+                depto,
+                nombre,
+                coefA,
+                coefB,
+                email,
+                phone
+            });
+
+            currentEditingBuilding.units.sort((a,b) => a.uf - b.uf);
+
+            document.getElementById('add-unit-form').reset();
+            document.getElementById('add-uf-coefB').value = '0';
+            renderConfigUnitsTable();
+        }
+
+        function deleteConfigUnit(index) {
+            currentEditingBuilding.units.splice(index, 1);
+            renderConfigUnitsTable();
+        }
+
+        function toggleInstallmentFields(checked) {
+            const container = document.getElementById('rec-installment-fields');
+            if (checked) {
+                container.style.display = 'flex';
+                document.getElementById('add-rec-currentInstallment').required = true;
+                document.getElementById('add-rec-totalInstallments').required = true;
+            } else {
+                container.style.display = 'none';
+                document.getElementById('add-rec-currentInstallment').required = false;
+                document.getElementById('add-rec-totalInstallments').required = false;
+            }
+        }
+
+        function renderConfigRecurringTable() {
+            const tbody = document.getElementById('config-recurring-table-body');
+            tbody.innerHTML = '';
+            const recurring = currentEditingBuilding?.recurringExpenses || [];
+            
+            if (recurring.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">No hay gastos recurrentes configurados para este consorcio.</td></tr>';
+                return;
+            }
+
+            const catNames = {
+                '2': 'Servicios Públicos',
+                '3': 'Abonos de Servicios',
+                '4': 'Mantenimiento Común',
+                '5': 'Reparaciones Unidades',
+                '6': 'Gastos Bancarios',
+                '7': 'Gastos Limpieza',
+                '8': 'Gastos Administración',
+                '9': 'Seguros',
+                '10': 'Otros Gastos'
+            };
+
+            recurring.forEach((r, index) => {
+                const row = document.createElement('tr');
+                const catText = catNames[r.category] || r.category;
+                
+                let detailsStr = "Fijo Recurrente";
+                if (r.isInstallment) {
+                    detailsStr = `Financiado (Cuota ${r.currentInstallment || 1} de ${r.totalInstallments || 1})`;
+                }
+                
+                row.innerHTML = `
+                    <td><span class="badge-info">${r.category} - ${catText}</span></td>
+                    <td><strong>${r.description}</strong></td>
+                    <td class="text-right mono">${formatMoney(r.amount)}</td>
+                    <td>${r.type === 'B' ? 'B (Extraord.)' : 'A (Común)'}</td>
+                    <td><span style="color: ${r.isInstallment ? 'var(--accent-purple)' : 'var(--accent-green)'}">${detailsStr}</span></td>
+                    <td>
+                        <button type="button" class="btn-action" style="background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); padding: 4px 8px;" onclick="deleteConfigRecurringExpense(${index})">🗑</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addConfigRecurringExpense(e) {
+            e.preventDefault();
+            const category = document.getElementById('add-rec-category').value;
+            const description = document.getElementById('add-rec-description').value;
+            const amount = parseFloat(document.getElementById('add-rec-amount').value) || 0;
+            const type = document.getElementById('add-rec-type').value;
+            const isInstallment = document.getElementById('add-rec-isInstallment').checked;
+            
+            const exp = {
+                id: 'rec_' + Date.now() + '_' + Math.floor(Math.random() * 100),
+                category,
+                description,
+                amount,
+                type,
+                isInstallment
+            };
+            
+            if (isInstallment) {
+                exp.currentInstallment = parseInt(document.getElementById('add-rec-currentInstallment').value) || 1;
+                exp.totalInstallments = parseInt(document.getElementById('add-rec-totalInstallments').value) || 1;
+            }
+            
+            if (!currentEditingBuilding.recurringExpenses) {
+                currentEditingBuilding.recurringExpenses = [];
+            }
+            
+            currentEditingBuilding.recurringExpenses.push(exp);
+            
+            // reset form elements
+            document.getElementById('add-rec-description').value = '';
+            document.getElementById('add-rec-amount').value = '';
+            document.getElementById('add-rec-isInstallment').checked = false;
+            toggleInstallmentFields(false);
+            
+            renderConfigRecurringTable();
+        }
+
+        function deleteConfigRecurringExpense(index) {
+            currentEditingBuilding.recurringExpenses.splice(index, 1);
+            renderConfigRecurringTable();
+        }
+
+        async function saveConfigConsorcio(e) {
+            e.preventDefault();
+            const cuit = document.getElementById('cfg-cuit').value;
+            
+            const consorcioData = {
+                name: document.getElementById('cfg-name').value,
+                suterhKey: document.getElementById('cfg-suterhKey').value,
+                interestRate: parseFloat(document.getElementById('cfg-interest').value) || 0.03,
+                dueDay: parseInt(document.getElementById('cfg-dueDay').value) || 10,
+                bankInfo: {
+                    bankName: document.getElementById('cfg-bankName').value,
+                    titular: document.getElementById('cfg-bankTitular').value,
+                    accountNumber: document.getElementById('cfg-bankAccount').value,
+                    cbu: document.getElementById('cfg-cbu').value,
+                    alias: document.getElementById('cfg-alias').value
+                },
+                category: document.getElementById('cfg-category').value,
+                zonaDesfavorable: document.getElementById('cfg-zonaDesfavorable').value,
+                cochera: document.getElementById('cfg-cochera').value,
+                jardin: document.getElementById('cfg-jardin').value,
+                pileta: document.getElementById('cfg-pileta').value,
+                movimientoCoches: document.getElementById('cfg-movimientoCoches').value,
+                caldera: document.getElementById('cfg-caldera').value,
+                artRate: parseFloat(document.getElementById('cfg-artRate').value) || 0.03,
+                scvoFijo: parseFloat(document.getElementById('cfg-scvoFijo').value) || 424.62,
+                units: currentEditingBuilding.units || [],
+                recurringExpenses: currentEditingBuilding.recurringExpenses || []
+            };
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/consorcios/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuit, consorcioData })
+                });
+                if (!response.ok) throw new Error('Error al guardar consorcio');
+                showToast('Consorcio guardado con éxito!');
+                
+                await loadConsorcios();
+                document.getElementById('consorcio-selector').value = cuit;
+                await loadConfigTab();
+                processData();
+            } catch (err) {
+                showAlert('Error', err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function deleteConfigConsorcio() {
+            const cuit = document.getElementById('cfg-cuit').value;
+            if (!cuit) return;
+
+            showConfirm('¿Eliminar consorcio?', '¿Seguro que desea eliminar este consorcio y todas sus configuraciones? Esta acción no se puede deshacer.', 'Sí, eliminar', 'Cancelar').then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                document.getElementById('loading').style.display = 'flex';
+                try {
+                    const response = await fetch('/api/db/consorcios/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cuit })
+                    });
+                    if (!response.ok) throw new Error('Error al eliminar consorcio');
+                    showToast('Consorcio eliminado.');
+                    await loadConsorcios();
+                    const selector = document.getElementById('consorcio-selector');
+                    if (selector.options.length > 0) {
+                        selector.selectedIndex = 0;
+                    }
+                    await loadConfigTab();
+                    processData();
+                } catch (e) {
+                    showAlert('Error', e.message, 'error');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        // --- CONFIG EMPLOYEES LOGIC ---
+        let loadedEmployees = [];
+        async function loadConfigEmployees() {
+            const listContainer = document.getElementById('config-employees-list');
+            listContainer.innerHTML = '<span style="color: var(--text-muted);">Cargando...</span>';
+
+            const activeCuit = document.getElementById('consorcio-selector').value;
+            if (!activeCuit) {
+                listContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 12px; padding: 10px 0;">Selecciona un consorcio arriba primero.</span>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/db/employees?cuit=${activeCuit}`);
+                if (response.ok) {
+                    loadedEmployees = await response.json();
+                    listContainer.innerHTML = '';
+                    
+                    if (loadedEmployees.length === 0) {
+                        listContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 12px; padding: 10px 0;">No hay empleados registrados para este consorcio.</span>';
+                        initNewEmployee();
+                        return;
+                    }
+
+                    loadedEmployees.forEach(e => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-action';
+                        btn.style.width = '100%';
+                        btn.style.textAlign = 'left';
+                        btn.style.marginBottom = '4px';
+                        btn.style.padding = '8px 12px';
+                        btn.innerText = e.employeeName;
+                        btn.onclick = () => loadConfigEmployeeDetail(e.cuil);
+                        listContainer.appendChild(btn);
+                    });
+                    
+                    loadConfigEmployeeDetail(loadedEmployees[0].cuil);
+                }
+            } catch (err) {
+                listContainer.innerHTML = '<span style="color: var(--accent-red);">Error al cargar</span>';
+            }
+        }
+
+        function loadConfigEmployeeDetail(cuil) {
+            const emp = loadedEmployees.find(e => String(e.cuil).replace(/[^0-9]/g, '') === String(cuil).replace(/[^0-9]/g, ''));
+            if (!emp) return;
+            currentEditingEmployee = emp;
+
+            document.getElementById('config-employee-title').innerText = `👥 Ficha: ${emp.employeeName}`;
+            document.getElementById('emp-cuil').value = emp.cuil || '';
+            document.getElementById('emp-cuil').readOnly = true;
+            document.getElementById('emp-name').value = emp.employeeName || '';
+            document.getElementById('emp-cuitEmployer').value = emp.cuitEmployer || emp.CUIT_EMPLEADOR || emp['CUIT EMPLEADOR'] || '';
+            document.getElementById('emp-cuitEmployer').disabled = true;
+            
+            let dateStr = emp.hireDate || emp['FECHA DE INGRESO'] || '';
+            if (typeof dateStr === 'number') {
+                const excelEpoch = new Date(1899, 11, 30);
+                const hireDate = new Date(excelEpoch.getTime() + dateStr * 24 * 60 * 60 * 1000);
+                dateStr = hireDate.toISOString().substring(0, 10);
+            } else if (dateStr) {
+                dateStr = new Date(dateStr).toISOString().substring(0, 10);
+            }
+            document.getElementById('emp-hireDate').value = dateStr;
+            document.getElementById('emp-category').value = emp.category || '1';
+            document.getElementById('emp-function').value = emp.function || emp.FUNCION || '';
+            document.getElementById('emp-bank').value = emp.bank || emp.BANCODEPOSITO || emp['BANCO DEPOSITO'] || '';
+            document.getElementById('emp-cbu').value = emp.cbu || emp.CBU || '';
+
+            document.getElementById('emp-plusJardin').checked = !!emp.plusJardin;
+            document.getElementById('emp-plusPileta').checked = !!emp.plusPileta;
+            document.getElementById('emp-plusCochera').checked = !!emp.plusCochera;
+            document.getElementById('emp-plusMovimientoCoches').checked = !!emp.plusMovimientoCoches;
+
+            document.getElementById('btn-delete-employee').style.display = 'inline-block';
+        }
+
+        function initNewEmployee() {
+            const activeCuit = document.getElementById('consorcio-selector').value || '';
+            currentEditingEmployee = {
+                cuil: '',
+                employeeName: '',
+                cuitEmployer: activeCuit,
+                hireDate: '',
+                category: '1',
+                function: 'Encargado Permanente',
+                bank: '',
+                cbu: '',
+                plusJardin: false,
+                plusPileta: false,
+                plusCochera: false,
+                plusMovimientoCoches: false
+            };
+
+            document.getElementById('emp-plusJardin').checked = false;
+            document.getElementById('emp-plusPileta').checked = false;
+            document.getElementById('emp-plusCochera').checked = false;
+            document.getElementById('emp-plusMovimientoCoches').checked = false;
+
+            document.getElementById('config-employee-title').innerText = `👥 Registrar Empleado Nuevo`;
+            document.getElementById('emp-cuil').value = '';
+            document.getElementById('emp-cuil').readOnly = false;
+            document.getElementById('emp-name').value = '';
+            document.getElementById('emp-cuitEmployer').value = activeCuit;
+            document.getElementById('emp-cuitEmployer').disabled = true;
+            document.getElementById('emp-hireDate').value = '';
+            document.getElementById('emp-category').value = '1';
+            document.getElementById('emp-function').value = 'Encargado Permanente';
+            document.getElementById('emp-bank').value = '';
+            document.getElementById('emp-cbu').value = '';
+
+            document.getElementById('btn-delete-employee').style.display = 'none';
+        }
+
+        async function saveConfigEmployee(e) {
+            e.preventDefault();
+            const cuil = document.getElementById('emp-cuil').value;
+
+            const employeeData = {
+                employeeName: document.getElementById('emp-name').value,
+                cuitEmployer: document.getElementById('emp-cuitEmployer').value,
+                hireDate: document.getElementById('emp-hireDate').value,
+                category: document.getElementById('emp-category').value,
+                function: document.getElementById('emp-function').value,
+                bank: document.getElementById('emp-bank').value,
+                cbu: document.getElementById('emp-cbu').value,
+                plusJardin: document.getElementById('emp-plusJardin').checked,
+                plusPileta: document.getElementById('emp-plusPileta').checked,
+                plusCochera: document.getElementById('emp-plusCochera').checked,
+                plusMovimientoCoches: document.getElementById('emp-plusMovimientoCoches').checked
+            };
+
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch('/api/db/employees/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cuil, employeeData })
+                });
+                if (!response.ok) throw new Error('Error al guardar empleado');
+                showToast('¡Empleado guardado!');
+                await loadConfigEmployees();
+            } catch (err) {
+                showAlert('Error', err.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function deleteConfigEmployee() {
+            const cuil = document.getElementById('emp-cuil').value;
+            if (!cuil) return;
+            
+            showConfirm('¿Eliminar empleado?', '¿Seguro que desea eliminar a este empleado de la base de datos?', 'Sí, eliminar', 'Cancelar').then(async (result) => {
+                if (!result.isConfirmed) return;
+
+                document.getElementById('loading').style.display = 'flex';
+                try {
+                    const response = await fetch('/api/db/employees/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cuil })
+                    });
+                    if (!response.ok) throw new Error('Error al eliminar empleado');
+                    showToast('Empleado eliminado.');
+                    await loadConfigEmployees();
+                } catch (e) {
+                    showAlert('Error', e.message, 'error');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        let documentationData = null;
+
+        function topCreateConsorcio() {
+            const configBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes('config-tab'));
+            if (configBtn) {
+                const mockEvent = { currentTarget: configBtn };
+                switchTab(mockEvent, 'config-tab');
+            }
+            switchConfigSubtab('consorcios');
+            initNewBuilding();
+        }
+
+        function renderDocumentationTab() {
+            if (!documentationData) {
+                document.getElementById('docs-files-list').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">No hay datos de documentación cargados. Procese las planillas primero.</span>';
+                document.getElementById('docs-info-details').innerHTML = '-';
+                document.getElementById('docs-scales-period').innerText = '-';
+                document.getElementById('docs-salaries-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Procese las planillas para ver la información.</td></tr>';
+                document.getElementById('docs-additionals-table-body').innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px;">Procese las planillas para ver la información.</td></tr>';
+                return;
+            }
+
+            const { scales, filesUsed } = documentationData;
+
+            // Render Files List
+            const filesContainer = document.getElementById('docs-files-list');
+            filesContainer.innerHTML = '';
+            filesUsed.forEach(f => {
+                const item = document.createElement('div');
+                item.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                item.style.border = '1px solid var(--border-color)';
+                item.style.borderRadius = '8px';
+                item.style.padding = '12px';
+                item.style.display = 'flex';
+                item.style.justifyContent = 'space-between';
+                item.style.alignItems = 'center';
+                
+                const fileIcon = f.type.toLowerCase().includes('excel') ? '📊' : f.type.toLowerCase().includes('db') ? '🗄️' : '📄';
+                
+                item.innerHTML = `
+                    <div>
+                        <div style="font-weight: 600; font-size: 13px; margin-bottom: 2px;">${fileIcon} ${f.name}</div>
+                        <div style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${f.path}</div>
+                    </div>
+                    <span class="badge-info" style="background-color: rgba(59, 130, 246, 0.1); color: var(--primary);">${f.type}</span>
+                `;
+                filesContainer.appendChild(item);
+            });
+
+            // Render Scale Metadata Info
+            const infoContainer = document.getElementById('docs-info-details');
+            infoContainer.innerHTML = `
+                <div style="margin-bottom: 8px;"><strong>Período de Aplicación:</strong> ${scales.period || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Fuente de Datos:</strong> <a href="${scales.url || '#'}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">Planilla Salarial Oficial SUTERH 🔗</a></div>
+                <div style="margin-bottom: 8px;"><strong>Fecha de Carga:</strong> ${scales.scrapedAt ? new Date(scales.scrapedAt).toLocaleString('es-AR') : 'N/A'}</div>
+                <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 10px;">
+                    Esta información es utilizada para calcular de manera exacta los sueldos básicos y adicionales de los encargados, según la categoría del edificio y sus funciones registradas.
+                </div>
+            `;
+
+            // Render Salaries Table
+            document.getElementById('docs-scales-period').innerText = `Período: ${scales.period}`;
+            const salariesBody = document.getElementById('docs-salaries-table-body');
+            salariesBody.innerHTML = '';
+            
+            if (scales.baseSalaries) {
+                Object.entries(scales.baseSalaries).forEach(([func, cats]) => {
+                    if (!func) return; // skip empty/invalid entries
+                    const row = document.createElement('tr');
+                    
+                    const cat1 = cats["1° Cat."] !== undefined ? formatMoney(cats["1° Cat."]) : '-';
+                    const cat2 = cats["2° Cat."] !== undefined ? formatMoney(cats["2° Cat."]) : '-';
+                    const cat3 = cats["3° Cat."] !== undefined ? formatMoney(cats["3° Cat."]) : '-';
+                    const cat4 = cats["4° Cat."] !== undefined ? formatMoney(cats["4° Cat."]) : '-';
+
+                    row.innerHTML = `
+                        <td><strong>${func}</strong></td>
+                        <td class="text-right mono">${cat1}</td>
+                        <td class="text-right mono">${cat2}</td>
+                        <td class="text-right mono">${cat3}</td>
+                        <td class="text-right mono">${cat4}</td>
+                    `;
+                    salariesBody.appendChild(row);
+                });
+            } else {
+                salariesBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Sin salarios básicos cargados.</td></tr>';
+            }
+
+            // Render Additionals Table
+            const additionalsBody = document.getElementById('docs-additionals-table-body');
+            additionalsBody.innerHTML = '';
+            if (scales.additionals) {
+                Object.entries(scales.additionals).forEach(([concept, val]) => {
+                    const row = document.createElement('tr');
+                    let valStr = typeof val === 'number' ? formatMoney(val) : String(val);
+                    row.innerHTML = `
+                        <td>${concept}</td>
+                        <td class="text-right mono" style="font-weight: 600; color: var(--accent-purple);">${valStr}</td>
+                    `;
+                    additionalsBody.appendChild(row);
+                });
+            } else {
+                additionalsBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px;">Sin adicionales cargados.</td></tr>';
+            }
+        }
+
+        // Auto process on load
+        window.onload = async () => {
+            await loadConsorcios();
+            processData();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.log
+scratch/email_logs/
+scratch/whatsapp_logs/
+.system_generated/
+.gemini/

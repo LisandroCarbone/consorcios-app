@@ -1,0 +1,965 @@
+
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Recibo de Sueldo - CANCINOS MARGARITA - Junio 2026</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+            
+            * {
+                box-sizing: border-box;
+            }
+            
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            
+            body {
+                font-family: 'Outfit', sans-serif;
+                margin: 0;
+                padding: 10mm;
+                background-color: #f8fafc;
+                color: #1e293b;
+                font-size: 11px;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                height: 277mm; /* Full A4 height minus padding */
+                justify-content: space-between;
+            }
+
+            .receipt-box {
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 8px 12px;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+                height: 130mm; /* Fit exactly twice on A4 */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .receipt-header {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 2px solid #3b82f6;
+                padding-bottom: 4px;
+                margin-bottom: 4px;
+            }
+
+            .company-info h2 {
+                margin: 0 0 4px 0;
+                color: #1e3a8a;
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+            .company-info p {
+                margin: 0 0 2px 0;
+                color: #64748b;
+                font-size: 10px;
+            }
+
+            .receipt-title {
+                text-align: right;
+            }
+
+            .receipt-title h1 {
+                margin: 4px 0 2px 0;
+                font-size: 14px;
+                color: #1e293b;
+                font-weight: 600;
+            }
+
+            .receipt-title .period {
+                margin: 0;
+                font-size: 10px;
+                color: #64748b;
+            }
+
+            .badge {
+                display: inline-block;
+                background-color: #dbeafe;
+                color: #1e40af;
+                padding: 2px 8px;
+                border-radius: 6px;
+                font-weight: 600;
+                font-size: 9px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .receipt-main-content {
+                display: flex;
+                gap: 12px;
+                flex-grow: 1;
+                min-height: 0;
+            }
+            
+            .receipt-column-left {
+                flex: 2.2;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                min-width: 0;
+            }
+            
+            .receipt-column-right {
+                flex: 1.1;
+                border-left: 1px solid #cbd5e1;
+                padding-left: 12px;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                min-width: 0;
+            }
+            
+            .section-title {
+                font-size: 8.5px;
+                font-weight: 700;
+                color: #1e3a8a;
+                border-bottom: 1.5px solid #3b82f6;
+                padding-bottom: 2px;
+                margin-bottom: 4px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .contributions-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 8.5px;
+                margin-bottom: 4px;
+            }
+            
+            .contributions-table th {
+                background-color: #f1f5f9;
+                color: #475569;
+                font-weight: 600;
+                text-align: left;
+                padding: 2px 4px;
+                border-bottom: 1px solid #cbd5e1;
+                font-size: 8px;
+            }
+            
+            .contributions-table td {
+                padding: 1px 4px;
+                border-bottom: 1px dotted #e2e8f0;
+                color: #334155;
+                font-size: 8px;
+                line-height: 1.1;
+            }
+            
+            .labor-cost-summary {
+                background-color: #f8fafc;
+                border: 1px solid #f1f5f9;
+                border-radius: 6px;
+                padding: 4px 6px;
+                margin-bottom: 4px;
+            }
+            
+            .labor-cost-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 8.5px;
+                margin-bottom: 2px;
+                color: #475569;
+            }
+            
+            .labor-cost-row span {
+                font-weight: 500;
+            }
+            
+            .labor-cost-row.total-cost {
+                border-top: 1px solid #cbd5e1;
+                padding-top: 3px;
+                margin-top: 3px;
+                margin-bottom: 0;
+                font-size: 9px;
+                color: #1e293b;
+            }
+            
+            .labor-cost-row.total-cost strong {
+                color: #1e3a8a;
+            }
+            
+            .chart-section {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 3px 4px;
+                background-color: #f8fafc;
+                border-radius: 6px;
+                border: 1px dashed #cbd5e1;
+            }
+            
+            .pie-chart {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                flex-shrink: 0;
+                box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+            }
+            
+            .chart-legend {
+                font-size: 8px;
+                color: #475569;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                width: 100%;
+            }
+            
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .legend-color {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 1.5px;
+                flex-shrink: 0;
+            }
+
+            .employee-card {
+                background-color: #f8fafc;
+                border: 1px solid #f1f5f9;
+                border-radius: 8px;
+                padding: 3px 6px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2px;
+                margin-bottom: 4px;
+            }
+
+            .employee-card p {
+                margin: 0;
+                font-size: 8.5px;
+            }
+
+            .employee-card span {
+                color: #64748b;
+                font-weight: 500;
+            }
+
+            .concepts-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 4px;
+                flex-grow: 1;
+            }
+
+            .concepts-table th {
+                background-color: #f1f5f9;
+                color: #475569;
+                font-weight: 600;
+                text-align: left;
+                padding: 3px 4px;
+                border-bottom: 1px solid #cbd5e1;
+                font-size: 8.5px;
+            }
+
+            .concepts-table td {
+                padding: 1px 4px;
+                border-bottom: 1px dotted #e2e8f0;
+                vertical-align: middle;
+                font-size: 8px;
+                line-height: 1.1;
+            }
+
+            .concepts-table td.code {
+                color: #94a3b8;
+                font-family: monospace;
+            }
+
+            .qty-badge {
+                font-size: 9px;
+                color: #64748b;
+                background: #f1f5f9;
+                padding: 1px 4px;
+                border-radius: 4px;
+                margin-left: 4px;
+            }
+
+            .concept-name-txt {
+                font-weight: 500;
+            }
+
+            .concept-details {
+                font-size: 7.5px;
+                color: #64748b;
+                margin-top: 1px;
+                font-weight: 400;
+                text-transform: none;
+            }
+
+            .line-left {
+                border-left: 1px solid #cbd5e1 !important;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .totals-row td {
+                font-weight: 600;
+                background-color: #f8fafc;
+                border-top: 1px solid #cbd5e1;
+                border-bottom: 1px solid #cbd5e1;
+                padding: 3px 4px;
+                font-size: 8.5px;
+            }
+
+            .net-row td {
+                font-weight: 700;
+                background-color: #eff6ff;
+                border-bottom: 2px solid #3b82f6;
+                padding: 4px;
+            }
+
+            .net-label {
+                color: #1e40af;
+                font-size: 9px;
+            }
+
+            .net-val {
+                color: #1e3a8a;
+                font-size: 11px;
+            }
+
+            .son-pesos {
+                font-weight: 400;
+                color: #64748b;
+                font-style: italic;
+            }
+
+            .receipt-footer {
+                display: flex;
+                justify-content: space-between;
+                margin-top: auto;
+                padding-top: 4px;
+            }
+
+            .signature-box {
+                width: 48%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                gap: 2px;
+            }
+
+            .signature-box p {
+                margin: 0;
+                color: #64748b;
+                font-size: 8.5px;
+            }
+
+            .signature-line {
+                border-top: 1px solid #94a3b8;
+                margin-top: 8px;
+                text-align: center;
+                padding-top: 2px;
+            }
+
+            .signature-line span {
+                color: #64748b;
+                font-size: 8px;
+            }
+
+            .cut-line {
+                border-top: 1px dashed #94a3b8;
+                text-align: center;
+                margin: 6px 0;
+                position: relative;
+            }
+
+            .cut-line span {
+                position: absolute;
+                top: -7px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #f8fafc;
+                padding: 0 12px;
+                color: #64748b;
+                font-size: 10px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            
+        <div class="receipt-box">
+            <div class="receipt-header">
+                <div class="company-info">
+                    <h2>CONSORCIO DE PROPIETARIOS ALTE BROWN 720</h2>
+                    <p>CUIT: 30604528166</p>
+                    <p>Domicilio: Capital Federal</p>
+                </div>
+                <div class="receipt-title">
+                    <div style="display: flex; gap: 4px; justify-content: flex-end; align-items: center;">
+                        <span class="badge" style="background-color: #fef3c7; color: #d97706; font-size: 8px;">Dec. 407/2026</span>
+                        <div class="badge">ORIGINAL</div>
+                    </div>
+                    <h1>RECIBO DE HABERES</h1>
+                    <p class="period">Período: <strong>Junio 2026</strong></p>
+                </div>
+            </div>
+
+            <div class="receipt-main-content">
+                <!-- COLUMNA IZQUIERDA: Liquidación Salarial -->
+                <div class="receipt-column-left">
+                    <div class="employee-card">
+                        <div class="grid-col">
+                            <p><span>Legajo:</span> 3</p>
+                            <p><span>Empleado:</span> <strong>CANCINOS MARGARITA</strong></p>
+                            <p><span>CUIL:</span> 27174620410</p>
+                            <p><span>Fecha de Ingreso:</span> 20/4/1999</p>
+                        </div>
+                        <div class="grid-col">
+                            <p><span>Función/Categoría:</span> Encargado Permanente con vivienda (3° Cat.)</p>
+                            <p><span>Antigüedad:</span> 27 años</p>
+                            <p><span>Banco:</span> BBVA</p>
+                            <p><span>CBU:</span> CBU:0170003940000008666921</p>
+                        </div>
+                    </div>
+
+                    <table class="concepts-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 8%">Cód</th>
+                                <th style="width: 48%">Concepto (Haberes)</th>
+                                <th style="width: 18%" class="text-right">Importe</th>
+                                <th style="width: 8%" class="line-left">Cód</th>
+                                <th style="width: 48%">Concepto (Descuentos)</th>
+                                <th style="width: 18%" class="text-right">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                <tr>
+                    <td class="code">1000</td>
+                    <td><div class="concept-name-txt">Sueldo Básico</div></td>
+                    <td class="amount text-right">$ 998.970,00</td>
+                    <td class="code line-left">5000</td>
+                    <td><div class="concept-name-txt">Jubilación</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 11%</div></td>
+                    <td class="amount text-right">$ 295.148,47</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1100</td>
+                    <td><div class="concept-name-txt">Retiro de residuos por unidad destinada a vivienda u oficina</div>
+                <div class="concept-details">Base/UF: $ 1.940,90 | Cant: 39 UFs</div></td>
+                    <td class="amount text-right">$ 75.695,10</td>
+                    <td class="code line-left">5050</td>
+                    <td><div class="concept-name-txt">Ley 19032</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 3%</div></td>
+                    <td class="amount text-right">$ 80.495,04</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1150</td>
+                    <td><div class="concept-name-txt">Clasificación de residuos Resol. 2013 243 SSRT-GCABA</div></td>
+                    <td class="amount text-right">$ 39.669,91</td>
+                    <td class="code line-left">5100</td>
+                    <td><div class="concept-name-txt">Obra Social</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 3%</div></td>
+                    <td class="amount text-right">$ 80.495,04</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1200</td>
+                    <td><div class="concept-name-txt">Valor vivienda</div></td>
+                    <td class="amount text-right">$ 7.130,40</td>
+                    <td class="code line-left">5200</td>
+                    <td><div class="concept-name-txt">SUTERH</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 2%</div></td>
+                    <td class="amount text-right">$ 53.663,36</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1300</td>
+                    <td><div class="concept-name-txt">Plus por antigüedad – por año ART. 11 ( 2%)</div>
+                <div class="concept-details">Base/Año: $ 21.011,60 | Cant: 27 años</div></td>
+                    <td class="amount text-right">$ 567.313,20</td>
+                    <td class="code line-left">5250</td>
+                    <td><div class="concept-name-txt">Caja Prot. Flia.</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 1%</div></td>
+                    <td class="amount text-right">$ 26.831,68</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1750</td>
+                    <td><div class="concept-name-txt">Adicional Remuneratorio Mensual</div></td>
+                    <td class="amount text-right">$ 100.000,00</td>
+                    <td class="code line-left">5300</td>
+                    <td><div class="concept-name-txt">FATERYH</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 1%</div></td>
+                    <td class="amount text-right">$ 26.831,68</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">2200</td>
+                    <td><div class="concept-name-txt">Sueldo anual complementario</div>
+                <div class="concept-details">Semestre | Cant: 180 d.</div></td>
+                    <td class="amount text-right">$ 894.389,31</td>
+                    <td class="code line-left">5350</td>
+                    <td><div class="concept-name-txt">Seguro vitalicio - Art. 27 bis CCT 589/10</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 0.75%</div></td>
+                    <td class="amount text-right">$ 20.123,76</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">9000</td>
+                    <td><div class="concept-name-txt">Redondeo</div></td>
+                    <td class="amount text-right">$ 0,51</td>
+                    <td class="code line-left">5400</td>
+                    <td><div class="concept-name-txt">Desc. vivienda</div></td>
+                    <td class="amount text-right">$ 7.130,40</td>
+                </tr>
+            
+                        </tbody>
+                        <tfoot>
+                            <tr class="totals-row">
+                                <td colspan="2">TOTAL HABERES</td>
+                                <td class="text-right">$ 2.683.168,43</td>
+                                <td colspan="2" class="line-left">TOTAL DESCUENTOS</td>
+                                <td class="text-right">$ 590.719,43</td>
+                            </tr>
+                            <tr class="net-row">
+                                <td colspan="3">Son: <span class="son-pesos">PESOS 2092449 con 00/100 M.N.</span></td>
+                                <td colspan="2" class="line-left net-label">NETO A COBRAR</td>
+                                <td class="text-right net-val">$ 2.092.449,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="receipt-footer">
+                        <div class="signature-box">
+                            <p class="date-line">Recibí el importe de este recibo de conformidad.</p>
+                            <div class="signature-line">
+                                <span>Firma del Empleado</span>
+                            </div>
+                        </div>
+                        <div class="signature-box">
+                            <p class="date-line">Lugar y Fecha de Pago: C.A.B.A., ____/____/2026</p>
+                            <div class="signature-line">
+                                <span>Firma del Empleador</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: Costo Patronal y Gráfico -->
+                <div class="receipt-column-right">
+                    <div style="width: 100%;">
+                        <div class="section-title">SECCIÓN II: COSTO PATRONAL</div>
+                        <table class="contributions-table">
+                            <thead>
+                                <tr>
+                                    <th>Contribución Patronal</th>
+                                    <th class="text-right">Importe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">Seg. Social (SIPA/INSSJP)</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 18.72%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 502.289,03</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">Obra Social Patronal</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 5.10%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 136.841,56</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">LRT - ART</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 12.14%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 325.736,59</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">SCVO</div>
+                        <div class="concept-details">Importe Fijo</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 424,62</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">SUTERH</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 1.50%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 40.247,52</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">SERACARH</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 0.50%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 13.415,84</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">FATERYH</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 4.75%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 127.450,48</td>
+                </tr>
+            
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="width: 100%; margin-top: auto;">
+                        <div class="labor-cost-summary">
+                            <div class="labor-cost-row">
+                                <span>Salario Bruto:</span>
+                                <strong>$ 2.683.168,43</strong>
+                            </div>
+                            <div class="labor-cost-row">
+                                <span>Contribuciones:</span>
+                                <strong>$ 1.146.405,64</strong>
+                            </div>
+                            <div class="labor-cost-row total-cost">
+                                <span>Costo Laboral:</span>
+                                <strong>$ 3.829.574,07</strong>
+                            </div>
+                        </div>
+
+                        <div class="chart-section">
+                            <div class="pie-chart" style="background: conic-gradient(
+                                #3b82f6 0% 54.6%, 
+                                #ef4444 54.6% 70.1%, 
+                                #8b5cf6 70.1% 100%
+                            );"></div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #3b82f6;"></span>
+                                    <span>Neto: <strong>55%</strong></span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #ef4444;"></span>
+                                    <span>Aportes: <strong>15%</strong></span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #8b5cf6;"></span>
+                                    <span>Patronal: <strong>30%</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <div class="cut-line">
+                <span>✂ Cortar aquí</span>
+            </div>
+            
+        <div class="receipt-box">
+            <div class="receipt-header">
+                <div class="company-info">
+                    <h2>CONSORCIO DE PROPIETARIOS ALTE BROWN 720</h2>
+                    <p>CUIT: 30604528166</p>
+                    <p>Domicilio: Capital Federal</p>
+                </div>
+                <div class="receipt-title">
+                    <div style="display: flex; gap: 4px; justify-content: flex-end; align-items: center;">
+                        <span class="badge" style="background-color: #fef3c7; color: #d97706; font-size: 8px;">Dec. 407/2026</span>
+                        <div class="badge">DUPLICADO</div>
+                    </div>
+                    <h1>RECIBO DE HABERES</h1>
+                    <p class="period">Período: <strong>Junio 2026</strong></p>
+                </div>
+            </div>
+
+            <div class="receipt-main-content">
+                <!-- COLUMNA IZQUIERDA: Liquidación Salarial -->
+                <div class="receipt-column-left">
+                    <div class="employee-card">
+                        <div class="grid-col">
+                            <p><span>Legajo:</span> 3</p>
+                            <p><span>Empleado:</span> <strong>CANCINOS MARGARITA</strong></p>
+                            <p><span>CUIL:</span> 27174620410</p>
+                            <p><span>Fecha de Ingreso:</span> 20/4/1999</p>
+                        </div>
+                        <div class="grid-col">
+                            <p><span>Función/Categoría:</span> Encargado Permanente con vivienda (3° Cat.)</p>
+                            <p><span>Antigüedad:</span> 27 años</p>
+                            <p><span>Banco:</span> BBVA</p>
+                            <p><span>CBU:</span> CBU:0170003940000008666921</p>
+                        </div>
+                    </div>
+
+                    <table class="concepts-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 8%">Cód</th>
+                                <th style="width: 48%">Concepto (Haberes)</th>
+                                <th style="width: 18%" class="text-right">Importe</th>
+                                <th style="width: 8%" class="line-left">Cód</th>
+                                <th style="width: 48%">Concepto (Descuentos)</th>
+                                <th style="width: 18%" class="text-right">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                <tr>
+                    <td class="code">1000</td>
+                    <td><div class="concept-name-txt">Sueldo Básico</div></td>
+                    <td class="amount text-right">$ 998.970,00</td>
+                    <td class="code line-left">5000</td>
+                    <td><div class="concept-name-txt">Jubilación</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 11%</div></td>
+                    <td class="amount text-right">$ 295.148,47</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1100</td>
+                    <td><div class="concept-name-txt">Retiro de residuos por unidad destinada a vivienda u oficina</div>
+                <div class="concept-details">Base/UF: $ 1.940,90 | Cant: 39 UFs</div></td>
+                    <td class="amount text-right">$ 75.695,10</td>
+                    <td class="code line-left">5050</td>
+                    <td><div class="concept-name-txt">Ley 19032</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 3%</div></td>
+                    <td class="amount text-right">$ 80.495,04</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1150</td>
+                    <td><div class="concept-name-txt">Clasificación de residuos Resol. 2013 243 SSRT-GCABA</div></td>
+                    <td class="amount text-right">$ 39.669,91</td>
+                    <td class="code line-left">5100</td>
+                    <td><div class="concept-name-txt">Obra Social</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 3%</div></td>
+                    <td class="amount text-right">$ 80.495,04</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1200</td>
+                    <td><div class="concept-name-txt">Valor vivienda</div></td>
+                    <td class="amount text-right">$ 7.130,40</td>
+                    <td class="code line-left">5200</td>
+                    <td><div class="concept-name-txt">SUTERH</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 2%</div></td>
+                    <td class="amount text-right">$ 53.663,36</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1300</td>
+                    <td><div class="concept-name-txt">Plus por antigüedad – por año ART. 11 ( 2%)</div>
+                <div class="concept-details">Base/Año: $ 21.011,60 | Cant: 27 años</div></td>
+                    <td class="amount text-right">$ 567.313,20</td>
+                    <td class="code line-left">5250</td>
+                    <td><div class="concept-name-txt">Caja Prot. Flia.</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 1%</div></td>
+                    <td class="amount text-right">$ 26.831,68</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1750</td>
+                    <td><div class="concept-name-txt">Adicional Remuneratorio Mensual</div></td>
+                    <td class="amount text-right">$ 100.000,00</td>
+                    <td class="code line-left">5300</td>
+                    <td><div class="concept-name-txt">FATERYH</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 1%</div></td>
+                    <td class="amount text-right">$ 26.831,68</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">2200</td>
+                    <td><div class="concept-name-txt">Sueldo anual complementario</div>
+                <div class="concept-details">Semestre | Cant: 180 d.</div></td>
+                    <td class="amount text-right">$ 894.389,31</td>
+                    <td class="code line-left">5350</td>
+                    <td><div class="concept-name-txt">Seguro vitalicio - Art. 27 bis CCT 589/10</div>
+                <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 0.75%</div></td>
+                    <td class="amount text-right">$ 20.123,76</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">9000</td>
+                    <td><div class="concept-name-txt">Redondeo</div></td>
+                    <td class="amount text-right">$ 0,51</td>
+                    <td class="code line-left">5400</td>
+                    <td><div class="concept-name-txt">Desc. vivienda</div></td>
+                    <td class="amount text-right">$ 7.130,40</td>
+                </tr>
+            
+                        </tbody>
+                        <tfoot>
+                            <tr class="totals-row">
+                                <td colspan="2">TOTAL HABERES</td>
+                                <td class="text-right">$ 2.683.168,43</td>
+                                <td colspan="2" class="line-left">TOTAL DESCUENTOS</td>
+                                <td class="text-right">$ 590.719,43</td>
+                            </tr>
+                            <tr class="net-row">
+                                <td colspan="3">Son: <span class="son-pesos">PESOS 2092449 con 00/100 M.N.</span></td>
+                                <td colspan="2" class="line-left net-label">NETO A COBRAR</td>
+                                <td class="text-right net-val">$ 2.092.449,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="receipt-footer">
+                        <div class="signature-box">
+                            <p class="date-line">Recibí el importe de este recibo de conformidad.</p>
+                            <div class="signature-line">
+                                <span>Firma del Empleado</span>
+                            </div>
+                        </div>
+                        <div class="signature-box">
+                            <p class="date-line">Lugar y Fecha de Pago: C.A.B.A., ____/____/2026</p>
+                            <div class="signature-line">
+                                <span>Firma del Empleador</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: Costo Patronal y Gráfico -->
+                <div class="receipt-column-right">
+                    <div style="width: 100%;">
+                        <div class="section-title">SECCIÓN II: COSTO PATRONAL</div>
+                        <table class="contributions-table">
+                            <thead>
+                                <tr>
+                                    <th>Contribución Patronal</th>
+                                    <th class="text-right">Importe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">Seg. Social (SIPA/INSSJP)</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 18.72%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 502.289,03</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">Obra Social Patronal</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 5.10%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 136.841,56</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">LRT - ART</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 12.14%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 325.736,59</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">SCVO</div>
+                        <div class="concept-details">Importe Fijo</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 424,62</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">SUTERH</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 1.50%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 40.247,52</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">SERACARH</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 0.50%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 13.415,84</td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div class="concept-name-txt">FATERYH</div>
+                        <div class="concept-details">Base: $ 2.683.167,92 | Alíc: 4.75%</div>
+                    </td>
+                    <td class="text-right" style="vertical-align: middle;">$ 127.450,48</td>
+                </tr>
+            
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="width: 100%; margin-top: auto;">
+                        <div class="labor-cost-summary">
+                            <div class="labor-cost-row">
+                                <span>Salario Bruto:</span>
+                                <strong>$ 2.683.168,43</strong>
+                            </div>
+                            <div class="labor-cost-row">
+                                <span>Contribuciones:</span>
+                                <strong>$ 1.146.405,64</strong>
+                            </div>
+                            <div class="labor-cost-row total-cost">
+                                <span>Costo Laboral:</span>
+                                <strong>$ 3.829.574,07</strong>
+                            </div>
+                        </div>
+
+                        <div class="chart-section">
+                            <div class="pie-chart" style="background: conic-gradient(
+                                #3b82f6 0% 54.6%, 
+                                #ef4444 54.6% 70.1%, 
+                                #8b5cf6 70.1% 100%
+                            );"></div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #3b82f6;"></span>
+                                    <span>Neto: <strong>55%</strong></span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #ef4444;"></span>
+                                    <span>Aportes: <strong>15%</strong></span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #8b5cf6;"></span>
+                                    <span>Patronal: <strong>30%</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </body>
+    </html>
+    

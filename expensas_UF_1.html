@@ -1,0 +1,501 @@
+
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Expensas - URUGUAY 1025/27/29 CAP. FED. - UF 1 - 2026-05</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+            
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+            
+            body {
+                font-family: 'Outfit', sans-serif;
+                margin: 0;
+                background-color: #f8fafc;
+                color: #1e293b;
+                font-size: 10px;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .header-card {
+                background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                color: white;
+                padding: 16px 20px;
+                border-radius: 12px;
+                margin-bottom: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            }
+
+            .header-title h1 {
+                margin: 0 0 4px 0;
+                font-size: 16px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+            }
+
+            .header-title p {
+                margin: 0;
+                font-size: 11px;
+                opacity: 0.9;
+            }
+
+            .header-period {
+                text-align: right;
+            }
+
+            .header-period h2 {
+                margin: 0 0 4px 0;
+                font-size: 18px;
+                font-weight: 800;
+            }
+
+            .header-period p {
+                margin: 0;
+                font-size: 11px;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 2px 8px;
+                border-radius: 6px;
+                display: inline-block;
+            }
+
+            .info-section {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .info-card {
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 12px;
+                box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.02);
+            }
+
+            .info-card h3 {
+                margin: 0 0 8px 0;
+                font-size: 11px;
+                color: #1e3a8a;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 4px;
+                font-weight: 600;
+            }
+
+            .info-card p {
+                margin: 0 0 4px 0;
+                font-size: 10.5px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .info-card p span {
+                color: #64748b;
+            }
+
+            .payment-card {
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+            }
+
+            .payment-card h3 {
+                color: #1d4ed8;
+                border-bottom-color: #bfdbfe;
+            }
+
+            .payment-card p.total-to-pay {
+                font-size: 14px;
+                font-weight: 700;
+                color: #1e3a8a;
+                margin-top: 8px;
+                border-top: 1px solid #bfdbfe;
+                padding-top: 6px;
+            }
+
+            .bank-card {
+                background-color: #faf5ff;
+                border: 1px solid #e9d5ff;
+            }
+
+            .bank-card h3 {
+                color: #7e22ce;
+                border-bottom-color: #e9d5ff;
+            }
+
+            .table-title {
+                font-size: 12px;
+                font-weight: 700;
+                color: #1e3a8a;
+                margin: 16px 0 8px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .table-title span {
+                font-size: 10px;
+                font-weight: 500;
+                color: #64748b;
+            }
+
+            .expenses-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.02);
+                margin-bottom: 16px;
+            }
+
+            .expenses-table th {
+                background-color: #f1f5f9;
+                color: #475569;
+                font-weight: 600;
+                padding: 6px 10px;
+                border-bottom: 1.5px solid #cbd5e1;
+                text-align: left;
+            }
+
+            .expenses-table td {
+                padding: 5px 10px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+            }
+
+            .category-header-row {
+                background-color: #f8fafc;
+            }
+
+            .category-header-row td {
+                border-top: 1.5px solid #e2e8f0;
+                border-bottom: 1.5px solid #cbd5e1;
+                font-weight: 600;
+                color: #1e3a8a;
+                padding: 6px 10px;
+            }
+
+            .cat-num {
+                font-family: monospace;
+                text-align: center;
+                background-color: #e2e8f0;
+                color: #475569;
+                border-radius: 4px;
+            }
+
+            .item-particular-row {
+                background-color: #fef2f2;
+                color: #991b1b;
+            }
+
+            .item-desc {
+                font-size: 9.5px;
+            }
+
+            .item-val {
+                font-family: monospace;
+            }
+
+            .totals-summary-card {
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 16px;
+                box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.02);
+            }
+
+            .totals-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                text-align: center;
+            }
+
+            .totals-grid-item {
+                border-right: 1px solid #e2e8f0;
+            }
+
+            .totals-grid-item:last-child {
+                border-right: none;
+            }
+
+            .totals-grid-item h4 {
+                margin: 0 0 4px 0;
+                font-size: 9.5px;
+                color: #64748b;
+                text-transform: uppercase;
+                font-weight: 500;
+            }
+
+            .totals-grid-item p {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 700;
+                color: #1e3a8a;
+            }
+
+            .state-card {
+                background-color: #f0fdf4;
+                border: 1px solid #bbf7d0;
+                color: #166534;
+            }
+
+            .state-card h3 {
+                color: #166534;
+                border-bottom-color: #bbf7d0;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .footer-info {
+                text-align: center;
+                color: #94a3b8;
+                font-size: 9px;
+                margin-top: 24px;
+                border-top: 1px solid #e2e8f0;
+                padding-top: 12px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <!-- Header -->
+        <div class="header-card">
+            <div class="header-title">
+                <h1>URUGUAY 1025/27/29 CAP. FED.</h1>
+                <p>CUIT: 30-58026090-6 | Domicilio: CONS DE PROPIETARIOS URUGUAY 1025 27 29</p>
+                <p>Clave SUTERH: 1542</p>
+            </div>
+            <div class="header-period">
+                <h2>2026-05</h2>
+                <p>Vencimiento: 10/06/2026</p>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-section">
+            <div class="info-card">
+                <h3>DATOS DE LA UNIDAD FUNCIONAL</h3>
+                <p><span>U.F. N°:</span> <strong>1</strong></p>
+                <p><span>Departamento:</span> LOC 1</p>
+                <p><span>Propietario:</span> <strong>DALLAVIA ALEJANDRO A.</strong></p>
+                <p><span>Coeficiente de Prorrateo A:</span> 2.5%</p>
+            </div>
+
+            <div class="info-card payment-card">
+                <h3>RESUMEN DE CUENTA</h3>
+                <p><span>Saldo Anterior:</span> $ 168.188,00</p>
+                <p><span>Su Pago del Período:</span> - $ -168.188,00</p>
+                <p><span>Saldo Remanente:</span> $ 336.376,00</p>
+                <p><span>Expensas del Mes:</span> $ 168.797,00</p>
+                <p><span>Intereses por Mora (5%):</span> $ 0,00</p>
+                <p class="total-to-pay"><span>TOTAL A PAGAR:</span> $ 168.797,00</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card bank-card">
+                <h3>DATOS PARA EL PAGO</h3>
+                <p><span>Banco:</span> ICBC</p>
+                <p><span>Cuenta:</span> Cuenta: CC $ 0538/02104658/84</p>
+                <p><span>CBU:</span> 0150538202000104658840</p>
+                <p><span>Alias:</span> BICI.FRASE.BOTE</p>
+                <p><span>Enviar Comprobante:</span> masoca_administraciones@hotmail.com</p>
+            </div>
+
+            <div class="info-card state-card">
+                <h3>ESTADO FINANCIERO DE CAJA</h3>
+                <p><span>Saldo de Caja Anterior:</span> $ 14.331.635,65</p>
+                <p><span>Cobranzas de Expensas (+):</span> $ 8.866.587,00</p>
+                <p><span>Pagos de Gastos A y B (-):</span> $ 5.157.998,62</p>
+                <p><span>Pagos Particulares (-):</span> $ 0,00</p>
+                <p style="font-weight: 700; border-top: 1px solid #bbf7d0; padding-top: 4px; margin-top: 4px;"><span>SALDO AL CIERRE DE CAJA:</span> $ 16.824.186,75</p>
+            </div>
+        </div>
+
+        <!-- Detailed Expenses -->
+        <div class="table-title">
+            LIQUIDACION DETALLADA DE GASTOS
+            <span>Periodo de Prorrateo: 2026-05</span>
+        </div>
+
+        <table class="expenses-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">Cód</th>
+                    <th style="width: 55%">Detalle de los Gastos Realizados</th>
+                    <th style="width: 15%" class="text-right">Gastos A y B</th>
+                    <th style="width: 15%" class="text-right">Gastos Part.</th>
+                    <th style="width: 10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="category-header-row">
+                <td class="cat-num">1</td>
+                <td colspan="3" class="cat-title">REMUNERACIONES AL PERSONAL Y CARGAS SOCIALES</td>
+                <td class="text-right cat-sum">$ 2.397.209,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Rodriguez Alfredo Raúl (20-33199231-4): sueldo neto</td>
+                    <td class="text-right item-val">$ 1.193.914,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Coronel Edgardo Dario (20-27589007-4): sueldo neto</td>
+                    <td class="text-right item-val">$ 1.203.295,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">3</td>
+                <td colspan="3" class="cat-title">ABONOS DE SERVICIOS</td>
+                <td class="text-right cat-sum">$ 395.606,22</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">6M Ascensores (30-71575069-0): mant de ascensores 04/26 FC 9407</td>
+                    <td class="text-right item-val">$ 180.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">ARCH (27-04933062-1): certificación profesional de calderas 04/26 FC 5086</td>
+                    <td class="text-right item-val">$ 56.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">MAFRAP Desinfecciones Urbanas SRL(30-64714402-7): servicio desinf. 04/26 FC 180558</td>
+                    <td class="text-right item-val">$ 85.270,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">de la red fija contra incendio FC 161825</td>
+                    <td class="text-right item-val">$ 74.336,22</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">6</td>
+                <td colspan="3" class="cat-title">GASTOS BANCARIOS</td>
+                <td class="text-right cat-sum">$ 125.663,97</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">ICBC: gastos bancarios e impuestos 05/26</td>
+                    <td class="text-right item-val">$ 125.663,97</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">7</td>
+                <td colspan="3" class="cat-title">GASTOS DE LIMPIEZA</td>
+                <td class="text-right cat-sum">$ 88.000,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">PIPACH (30-55129402-8): arts de limpieza TK 80912</td>
+                    <td class="text-right item-val">$ 88.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">8</td>
+                <td colspan="3" class="cat-title">GASTOS DE ADMINISTRACION Y LEGALES</td>
+                <td class="text-right cat-sum">$ 641.000,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Honorarios Administración 05/26</td>
+                    <td class="text-right item-val">$ 641.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">9</td>
+                <td colspan="3" class="cat-title">SEGUROS</td>
+                <td class="text-right cat-sum">$ 240.331,74</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">vigencia 22/09/25 al 22/09/26. Cuota 7/10 y endoso cuota 2/5</td>
+                    <td class="text-right item-val">$ 222.789,87</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">vigencia 01/10/2025 al 01/10/26. Cuota 8/10</td>
+                    <td class="text-right item-val">$ 17.541,87</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            </tbody>
+        </table>
+
+        <!-- Summary Totals -->
+        <div class="totals-summary-card">
+            <div class="totals-grid">
+                <div class="totals-grid-item">
+                    <h4>Total Pagos A y B</h4>
+                    <p>$ 3.887.810,93</p>
+                </div>
+                <div class="totals-grid-item">
+                    <h4>Previsiones/Fondos</h4>
+                    <p>$ 0,00</p>
+                </div>
+                <div class="totals-grid-item">
+                    <h4>Total Prorrateo</h4>
+                    <p>$ 8.234.000,00</p>
+                </div>
+                <div class="totals-grid-item">
+                    <h4>Gastos Particulares</h4>
+                    <p>$ 0,00</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <p>Documento oficial de liquidación de expensas emitido de forma automatizada por Antigravity Automa.</p>
+            <p>CONS DE PROPIETARIOS URUGUAY 1025 27 29 | Buenos Aires, Argentina | Emitido el 12/6/2026</p>
+        </div>
+
+    </body>
+    </html>
+    

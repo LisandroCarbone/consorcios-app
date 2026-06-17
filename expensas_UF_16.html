@@ -1,0 +1,669 @@
+
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Expensas - CONSORCIO DE PROPIETARIOS ARENALES 2120/24 CAPITAL FEDERAL - UF 16 - 2026-06</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+            
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+            
+            body {
+                font-family: 'Outfit', sans-serif;
+                margin: 0;
+                background-color: #f8fafc;
+                color: #1e293b;
+                font-size: 10px;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .header-card {
+                background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                color: white;
+                padding: 16px 20px;
+                border-radius: 12px;
+                margin-bottom: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            }
+
+            .header-title h1 {
+                margin: 0 0 4px 0;
+                font-size: 16px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+            }
+
+            .header-title p {
+                margin: 0;
+                font-size: 11px;
+                opacity: 0.9;
+            }
+
+            .header-period {
+                text-align: right;
+            }
+
+            .header-period h2 {
+                margin: 0 0 4px 0;
+                font-size: 18px;
+                font-weight: 800;
+            }
+
+            .header-period p {
+                margin: 0;
+                font-size: 11px;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 2px 8px;
+                border-radius: 6px;
+                display: inline-block;
+            }
+
+            .info-section {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .info-card {
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 12px;
+                box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.02);
+            }
+
+            .info-card h3 {
+                margin: 0 0 8px 0;
+                font-size: 11px;
+                color: #1e3a8a;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 4px;
+                font-weight: 600;
+            }
+
+            .info-card p {
+                margin: 0 0 4px 0;
+                font-size: 10.5px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .info-card p span {
+                color: #64748b;
+            }
+
+            .payment-card {
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+            }
+
+            .payment-card h3 {
+                color: #1d4ed8;
+                border-bottom-color: #bfdbfe;
+            }
+
+            .payment-card p.total-to-pay {
+                font-size: 14px;
+                font-weight: 700;
+                color: #1e3a8a;
+                margin-top: 8px;
+                border-top: 1px solid #bfdbfe;
+                padding-top: 6px;
+            }
+
+            .bank-card {
+                background-color: #faf5ff;
+                border: 1px solid #e9d5ff;
+            }
+
+            .bank-card h3 {
+                color: #7e22ce;
+                border-bottom-color: #e9d5ff;
+            }
+
+            .table-title {
+                font-size: 12px;
+                font-weight: 700;
+                color: #1e3a8a;
+                margin: 16px 0 8px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .table-title span {
+                font-size: 10px;
+                font-weight: 500;
+                color: #64748b;
+            }
+
+            .expenses-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.02);
+                margin-bottom: 16px;
+            }
+
+            .expenses-table th {
+                background-color: #f1f5f9;
+                color: #475569;
+                font-weight: 600;
+                padding: 6px 10px;
+                border-bottom: 1.5px solid #cbd5e1;
+                text-align: left;
+            }
+
+            .expenses-table td {
+                padding: 5px 10px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+            }
+
+            .category-header-row {
+                background-color: #f8fafc;
+            }
+
+            .category-header-row td {
+                border-top: 1.5px solid #e2e8f0;
+                border-bottom: 1.5px solid #cbd5e1;
+                font-weight: 600;
+                color: #1e3a8a;
+                padding: 6px 10px;
+            }
+
+            .cat-num {
+                font-family: monospace;
+                text-align: center;
+                background-color: #e2e8f0;
+                color: #475569;
+                border-radius: 4px;
+            }
+
+            .item-particular-row {
+                background-color: #fef2f2;
+                color: #991b1b;
+            }
+
+            .item-desc {
+                font-size: 9.5px;
+            }
+
+            .item-val {
+                font-family: monospace;
+            }
+
+            .totals-summary-card {
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
+                padding: 12px;
+                margin-top: 16px;
+                box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.02);
+            }
+
+            .totals-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                text-align: center;
+            }
+
+            .totals-grid-item {
+                border-right: 1px solid #e2e8f0;
+            }
+
+            .totals-grid-item:last-child {
+                border-right: none;
+            }
+
+            .totals-grid-item h4 {
+                margin: 0 0 4px 0;
+                font-size: 9.5px;
+                color: #64748b;
+                text-transform: uppercase;
+                font-weight: 500;
+            }
+
+            .totals-grid-item p {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 700;
+                color: #1e3a8a;
+            }
+
+            .state-card {
+                background-color: #f0fdf4;
+                border: 1px solid #bbf7d0;
+                color: #166534;
+            }
+
+            .state-card h3 {
+                color: #166534;
+                border-bottom-color: #bbf7d0;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .footer-info {
+                text-align: center;
+                color: #94a3b8;
+                font-size: 9px;
+                margin-top: 24px;
+                border-top: 1px solid #e2e8f0;
+                padding-top: 12px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <!-- Header -->
+        <div class="header-card">
+            <div class="header-title">
+                <h1>CONSORCIO DE PROPIETARIOS ARENALES 2120/24 CAPITAL FEDERAL</h1>
+                <p>CUIT: 30-54088775-2 | Domicilio: undefined</p>
+                <p>Clave SUTERH: N/A</p>
+            </div>
+            <div class="header-period">
+                <h2>2026-06</h2>
+                <p>Vencimiento: 10/07/2026</p>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-section">
+            <div class="info-card">
+                <h3>DATOS DE LA UNIDAD FUNCIONAL</h3>
+                <p><span>U.F. N°:</span> <strong>16</strong></p>
+                <p><span>Departamento:</span> PB</p>
+                <p><span>Propietario:</span> <strong>Pelayo</strong></p>
+                <p><span>Coeficiente de Prorrateo A:</span> 5.4%</p>
+            </div>
+
+            <div class="info-card payment-card">
+                <h3>RESUMEN DE CUENTA</h3>
+                <p><span>Saldo Anterior:</span> $ 863.805,32</p>
+                <p><span>Su Pago del Período:</span> - $ 0,00</p>
+                <p><span>Saldo Remanente:</span> $ 863.805,32</p>
+                <p><span>Expensas del Mes:</span> $ 369.505,07</p>
+                <p><span>Intereses por Mora (3%):</span> $ 25.914,16</p>
+                <p class="total-to-pay"><span>TOTAL A PAGAR:</span> $ 1.259.224,55</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card bank-card">
+                <h3>DATOS PARA EL PAGO</h3>
+                <p><span>Banco:</span> SANTANDER</p>
+                <p><span>Cuenta:</span> Cta. Cte. $ N°210-001841/8</p>
+                <p><span>CBU:</span> 0720210220000000184186</p>
+                <p><span>Alias:</span> CARDO.BARCO.COPA</p>
+                <p><span>Enviar Comprobante:</span> masoca_administraciones@hotmail.com</p>
+            </div>
+
+            <div class="info-card state-card">
+                <h3>ESTADO FINANCIERO DE CAJA</h3>
+                <p><span>Saldo de Caja Anterior:</span> $ 16.183.062,02</p>
+                <p><span>Cobranzas de Expensas (+):</span> $ 6.399.529,00</p>
+                <p><span>Pagos de Gastos A y B (-):</span> $ 5.235.659,07</p>
+                <p><span>Pagos Particulares (-):</span> $ 567.051,41</p>
+                <p style="font-weight: 700; border-top: 1px solid #bbf7d0; padding-top: 4px; margin-top: 4px;"><span>SALDO AL CIERRE DE CAJA:</span> $ 16.779.880,54</p>
+            </div>
+        </div>
+
+        <!-- Detailed Expenses -->
+        <div class="table-title">
+            LIQUIDACION DETALLADA DE GASTOS
+            <span>Periodo de Prorrateo: 2026-06</span>
+        </div>
+
+        <table class="expenses-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">Cód</th>
+                    <th style="width: 55%">Detalle de los Gastos Realizados</th>
+                    <th style="width: 15%" class="text-right">Gastos A y B</th>
+                    <th style="width: 15%" class="text-right">Gastos Part.</th>
+                    <th style="width: 10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="category-header-row">
+                <td class="cat-num">1</td>
+                <td colspan="3" class="cat-title">REMUNERACIONES AL PERSONAL Y CARGAS SOCIALES</td>
+                <td class="text-right cat-sum">$ 1.072.657,12</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">ARCA AFIP F. 931: Cargas sociales: SIJP y Obra social 05/26</td>
+                    <td class="text-right item-val">$ 714.258,81</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">ARCA AFIP F. 931: ART 05/26</td>
+                    <td class="text-right item-val">$ 111.812,31</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">ARCA AFIP F. 931: SCVO 05/26</td>
+                    <td class="text-right item-val">$ 424,62</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">SUTERH 05/26</td>
+                    <td class="text-right item-val">$ 78.730,19</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">FATERYH 05/26</td>
+                    <td class="text-right item-val">$ 158.683,39</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">FATERYH SERACARH 05/26</td>
+                    <td class="text-right item-val">$ 8.747,80</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">2</td>
+                <td colspan="3" class="cat-title">SERVICIOS PUBLICOS Y TASAS</td>
+                <td class="text-right cat-sum">$ 956.456,61</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">AYSA cuenta 3540973 28/05 al 27/06</td>
+                    <td class="text-right item-val">$ 150.119,24</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Edesur cliente 184832. Periodo 6</td>
+                    <td class="text-right item-val">$ 41.540,58</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Edesur cliente 184831 3. Periodo 6</td>
+                    <td class="text-right item-val">$ 444.583,16</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Edesur (Portería) cliente 184828 3. Periodo 6</td>
+                    <td class="text-right item-val">$ 26.058,73</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Metrogas:Medidor 25585405. 13/03 al 13/04</td>
+                    <td class="text-right item-val">$ 271.387,03</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Metrogas:Medidor 3105112. 13/03 al 13/04</td>
+                    <td class="text-right item-val">$ 22.767,87</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="item-particular-row">
+                    <td></td>
+                    <td class="item-desc">Gastos Particulares de Unidades Funcionales (AYSA / Otros)</td>
+                    <td class="text-right item-val"></td>
+                    <td class="text-right item-val">$ 567.051,41</td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">3</td>
+                <td colspan="3" class="cat-title">ABONOS DE SERVICIOS</td>
+                <td class="text-right cat-sum">$ 356.154,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Christophersen Asc. S.R.L. FC 69896</td>
+                    <td class="text-right item-val">$ 200.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Ing. Portal FC 1892</td>
+                    <td class="text-right item-val">$ 81.154,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Flach FC 1588</td>
+                    <td class="text-right item-val">$ 75.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">4</td>
+                <td colspan="3" class="cat-title">MANTENIMIENTO DE PARTES COMUNES</td>
+                <td class="text-right cat-sum">$ 484.500,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Gestionar FC 33848</td>
+                    <td class="text-right item-val">$ 484.500,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">5</td>
+                <td colspan="3" class="cat-title">TRABAJOS DE REPARACIONES EN UNIDADES</td>
+                <td class="text-right cat-sum">$ 1.340.000,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Good Service FC 509</td>
+                    <td class="text-right item-val">$ 960.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Cabrera FC 319</td>
+                    <td class="text-right item-val">$ 380.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">6</td>
+                <td colspan="3" class="cat-title">GASTOS BANCARIOS</td>
+                <td class="text-right cat-sum">$ 151.448,99</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Banco Santander Cta.Cte 210-1841/8</td>
+                    <td class="text-right item-val">$ 151.448,99</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">7</td>
+                <td colspan="3" class="cat-title">GASTOS DE LIMPIEZA</td>
+                <td class="text-right cat-sum">$ 66.400,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Pipach TK 80919</td>
+                    <td class="text-right item-val">$ 66.400,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">8</td>
+                <td colspan="3" class="cat-title">GASTOS DE ADMINISTRACION Y LEGALES</td>
+                <td class="text-right cat-sum">$ 574.000,00</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Honorarios Administración 06/26</td>
+                    <td class="text-right item-val">$ 574.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">9</td>
+                <td colspan="3" class="cat-title">SEGUROS</td>
+                <td class="text-right cat-sum">$ 234.042,35</td>
+            </tr>
+        
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Allianz Póliza N° 250230768351 Cuota 10/10</td>
+                    <td class="text-right item-val">$ 210.993,79</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Allianz Póliza N° 250230768351 Endoso Cuota 3/3</td>
+                    <td class="text-right item-val">$ 9.680,40</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr class="">
+                    <td></td>
+                    <td class="item-desc">Berkley Póliza N° 37559 Cuota 9/10</td>
+                    <td class="text-right item-val">$ 13.368,16</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            <tr class="category-header-row">
+                <td class="cat-num">P</td>
+                <td colspan="3" class="cat-title">PREVISIONES Y FONDOS</td>
+                <td class="text-right cat-sum">$ 1.050.000,00</td>
+            </tr>
+        
+                <tr>
+                    <td></td>
+                    <td class="item-desc">ARCA AFIP, SUTERH Y FATERYH 05/26</td>
+                    <td class="text-right item-val">$ -1.400.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td></td>
+                    <td class="item-desc">ARCA AFIP, SUTERH Y FATERYH 06/26</td>
+                    <td class="text-right item-val">$ 1.400.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td></td>
+                    <td class="item-desc">Del mes</td>
+                    <td class="text-right item-val">$ 1.000.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td></td>
+                    <td class="item-desc">Fondo de obra s/Asamblea Ordinaria del 21/12/2020</td>
+                    <td class="text-right item-val">$ 50.000,00</td>
+                    <td class="text-right item-val"></td>
+                    <td></td>
+                </tr>
+            
+            </tbody>
+        </table>
+
+        <!-- Summary Totals -->
+        <div class="totals-summary-card">
+            <div class="totals-grid">
+                <div class="totals-grid-item">
+                    <h4>Total Pagos A y B</h4>
+                    <p>$ 5.235.659,07</p>
+                </div>
+                <div class="totals-grid-item">
+                    <h4>Previsiones/Fondos</h4>
+                    <p>$ 1.050.000,00</p>
+                </div>
+                <div class="totals-grid-item">
+                    <h4>Total Prorrateo</h4>
+                    <p>$ 6.285.659,07</p>
+                </div>
+                <div class="totals-grid-item">
+                    <h4>Gastos Particulares</h4>
+                    <p>$ 567.051,41</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <p>Documento oficial de liquidación de expensas emitido de forma automatizada por Antigravity Automa.</p>
+            <p>Arenales 2120 | Buenos Aires, Argentina | Emitido el 11/6/2026</p>
+        </div>
+
+    </body>
+    </html>
+    

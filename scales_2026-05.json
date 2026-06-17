@@ -1,0 +1,166 @@
+{
+  "period": "2026-05",
+  "url": "https://suterh.org.ar/planilla-salarial-mayo-2026/",
+  "scrapedAt": "2026-06-11T18:12:59.633Z",
+  "baseSalaries": {
+    "Encargado Permanente con vivienda": {
+      "1° Cat.": 1089785,
+      "2° Cat.": 1044377,
+      "3° Cat.": 998970,
+      "4° Cat.": 908154
+    },
+    "Encargado Permanente sin vivienda": {
+      "1° Cat.": 1260697,
+      "2° Cat.": 1208168,
+      "3° Cat.": 1155639,
+      "4° Cat.": 1050581
+    },
+    "Ayudante Permanente con vivienda": {
+      "1° Cat.": 1089785,
+      "2° Cat.": 1044377,
+      "3° Cat.": 998970,
+      "4° Cat.": 908154
+    },
+    "Ayudante Permanente sin vivienda": {
+      "1° Cat.": 1260697,
+      "2° Cat.": 1208168,
+      "3° Cat.": 1155639,
+      "4° Cat.": 1050581
+    },
+    "Ayudante Media jornada": {
+      "1° Cat.": 630349,
+      "2° Cat.": 604084,
+      "3° Cat.": 577820,
+      "4° Cat.": 525291
+    },
+    "Personal Asimilado Con vivienda": {
+      "1° Cat.": 1089785,
+      "2° Cat.": 1044377,
+      "3° Cat.": 998970,
+      "4° Cat.": 908154
+    },
+    "Personal Asimilado Sin vivienda": {
+      "1° Cat.": 1260697,
+      "2° Cat.": 1208168,
+      "3° Cat.": 1155639,
+      "4° Cat.": 1050581
+    },
+    "Mayordomo Con vivienda": {
+      "1° Cat.": 1125952,
+      "2° Cat.": 1079038,
+      "3° Cat.": 1032123,
+      "4° Cat.": 938294
+    },
+    "Mayordomo Sin vivienda": {
+      "1° Cat.": 1307486,
+      "2° Cat.": 1253008,
+      "3° Cat.": 1198529,
+      "4° Cat.": 1089572
+    },
+    "Intendente": {
+      "1° Cat.": 1555281,
+      "2° Cat.": 1555281,
+      "3° Cat.": 1555281,
+      "4° Cat.": 1555281
+    },
+    "Personal con mas 1 Funcion con vivienda": {
+      "1° Cat.": 1089785,
+      "2° Cat.": 1044377,
+      "3° Cat.": 998970,
+      "4° Cat.": 908154
+    },
+    "Personal con mas 1 Funcion sin vivienda": {
+      "1° Cat.": 1260697,
+      "2° Cat.": 1208168,
+      "3° Cat.": 1155639,
+      "4° Cat.": 1050581
+    },
+    "Encargado Guardacoches con vivienda": {
+      "1° Cat.": 955299,
+      "2° Cat.": 955299,
+      "3° Cat.": 955299,
+      "4° Cat.": 955299
+    },
+    "Encargado Guardacoches sin vivienda": {
+      "1° Cat.": 1029119,
+      "2° Cat.": 1029119,
+      "3° Cat.": 1029119,
+      "4° Cat.": 1029119
+    },
+    "Personal Vigilancia Nocturna": {
+      "1° Cat.": 1127991,
+      "2° Cat.": 1127991,
+      "3° Cat.": 1127991,
+      "4° Cat.": 1127991
+    },
+    "Personal Vigilancia Diurna": {
+      "1° Cat.": 1056829,
+      "2° Cat.": 1056829,
+      "3° Cat.": 1056829,
+      "4° Cat.": 1056829
+    },
+    "Personal Vigilancia Media Jornada": {
+      "1° Cat.": 528414,
+      "2° Cat.": 528414,
+      "3° Cat.": 528414,
+      "4° Cat.": 528414
+    },
+    "Encargado No Permanente Con vivienda": {
+      "1° Cat.": 558435,
+      "2° Cat.": 558435,
+      "3° Cat.": 558435,
+      "4° Cat.": 558435
+    },
+    "Encargado No Permanente Sin vivienda": {
+      "1° Cat.": 598586,
+      "2° Cat.": 598586,
+      "3° Cat.": 598586,
+      "4° Cat.": 598586
+    },
+    "Ayudante Temporario": {
+      "1° Cat.": 1037220,
+      "2° Cat.": 1037220,
+      "3° Cat.": 1037220,
+      "4° Cat.": 1037220
+    },
+    "Ayudante Temporario Media Jornada": {
+      "1° Cat.": 518610,
+      "2° Cat.": 518610,
+      "3° Cat.": 518610,
+      "4° Cat.": 518610
+    },
+    "": {
+      "1° Cat.": 0,
+      "2° Cat.": 0,
+      "3° Cat.": 0,
+      "4° Cat.": 0
+    },
+    "Personal Jornalizado no mas 18 horas ( según ART. 7 INC. P HORA)": {
+      "1° Cat.": 0,
+      "2° Cat.": 10846.9,
+      "3° Cat.": 0,
+      "4° Cat.": 0
+    },
+    "Suplente con horario por dia": {
+      "1° Cat.": 0,
+      "2° Cat.": 47365.4,
+      "3° Cat.": 0,
+      "4° Cat.": 0
+    }
+  },
+  "additionals": {
+    "Retiro de residuos por unidad destinada a vivienda u oficina": 1940.9,
+    "Clasificación de residuos Resol. 2013 243 SSRT-GCABA": 33429.7,
+    "Valor vivienda": 7130.4,
+    "Plus por antigüedad conf. Resoluc. 106/09 &#8211; inc. D, e, h, n y p del art. 7 y 8 por año ( 1%)": 10505.8,
+    "Plus por antigüedad &#8211; por año ART. 11 ( 2%)": 21011.6,
+    "Plus limpieza de cocheras": 26486.5,
+    "Plus moviemiento de coches &#8211; hasta 20 unidades": 39216,
+    "Plus Jardin": 26486.5,
+    "Plus Zona Desfavorable": "50 %",
+    "Titulo de Encargado Integral de Edificio": "10 %",
+    "Plus limpieza de piletas y mantenimiento del agua": 44556.8,
+    "Adicional Viaticos": 73765.1,
+    "Adicional Remuneratorio Mensual": 80000
+  }
+}

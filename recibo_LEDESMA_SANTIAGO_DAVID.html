@@ -1,0 +1,548 @@
+
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Recibo de Sueldo - LEDESMA SANTIAGO DAVID - Junio 2026</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+            
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            
+            body {
+                font-family: 'Outfit', sans-serif;
+                margin: 0;
+                padding: 10mm;
+                box-sizing: border-box;
+                background-color: #f8fafc;
+                color: #1e293b;
+                font-size: 11px;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                height: 277mm; /* Full A4 height minus padding */
+                justify-content: space-between;
+            }
+
+            .receipt-box {
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 16px;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+                height: 122mm; /* Fit exactly twice on A4 */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .receipt-header {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 2px solid #3b82f6;
+                padding-bottom: 8px;
+                margin-bottom: 8px;
+            }
+
+            .company-info h2 {
+                margin: 0 0 4px 0;
+                color: #1e3a8a;
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+            .company-info p {
+                margin: 0 0 2px 0;
+                color: #64748b;
+                font-size: 10px;
+            }
+
+            .receipt-title {
+                text-align: right;
+            }
+
+            .receipt-title h1 {
+                margin: 4px 0 2px 0;
+                font-size: 14px;
+                color: #1e293b;
+                font-weight: 600;
+            }
+
+            .receipt-title .period {
+                margin: 0;
+                font-size: 10px;
+                color: #64748b;
+            }
+
+            .badge {
+                display: inline-block;
+                background-color: #dbeafe;
+                color: #1e40af;
+                padding: 2px 8px;
+                border-radius: 6px;
+                font-weight: 600;
+                font-size: 9px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .employee-card {
+                background-color: #f8fafc;
+                border: 1px solid #f1f5f9;
+                border-radius: 8px;
+                padding: 8px 12px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .employee-card p {
+                margin: 0;
+                font-size: 10.5px;
+            }
+
+            .employee-card span {
+                color: #64748b;
+                font-weight: 500;
+            }
+
+            .concepts-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 8px;
+                flex-grow: 1;
+            }
+
+            .concepts-table th {
+                background-color: #f1f5f9;
+                color: #475569;
+                font-weight: 600;
+                text-align: left;
+                padding: 5px 8px;
+                border-bottom: 1px solid #cbd5e1;
+                font-size: 10px;
+            }
+
+            .concepts-table td {
+                padding: 4px 8px;
+                border-bottom: 1px dotted #e2e8f0;
+                vertical-align: middle;
+            }
+
+            .concepts-table td.code {
+                color: #94a3b8;
+                font-family: monospace;
+            }
+
+            .qty-badge {
+                font-size: 9px;
+                color: #64748b;
+                background: #f1f5f9;
+                padding: 1px 4px;
+                border-radius: 4px;
+                margin-left: 4px;
+            }
+
+            .line-left {
+                border-left: 1px solid #cbd5e1 !important;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .totals-row td {
+                font-weight: 600;
+                background-color: #f8fafc;
+                border-top: 1px solid #cbd5e1;
+                border-bottom: 1px solid #cbd5e1;
+                padding: 6px 8px;
+            }
+
+            .net-row td {
+                font-weight: 700;
+                background-color: #eff6ff;
+                border-bottom: 2px solid #3b82f6;
+                padding: 8px;
+            }
+
+            .net-label {
+                color: #1e40af;
+                font-size: 11px;
+            }
+
+            .net-val {
+                color: #1e3a8a;
+                font-size: 13px;
+            }
+
+            .son-pesos {
+                font-weight: 400;
+                color: #64748b;
+                font-style: italic;
+            }
+
+            .receipt-footer {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+            }
+
+            .signature-box {
+                width: 48%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .signature-box p {
+                margin: 0;
+                color: #64748b;
+                font-size: 9.5px;
+            }
+
+            .signature-line {
+                border-top: 1px solid #94a3b8;
+                margin-top: 30px;
+                text-align: center;
+                padding-top: 4px;
+            }
+
+            .signature-line span {
+                color: #64748b;
+                font-size: 9px;
+            }
+
+            .cut-line {
+                border-top: 1.5px dashed #94a3b8;
+                text-align: center;
+                margin: 12px 0;
+                position: relative;
+            }
+
+            .cut-line span {
+                position: absolute;
+                top: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #f8fafc;
+                padding: 0 12px;
+                color: #64748b;
+                font-size: 10px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            
+        <div class="receipt-box">
+            <div class="receipt-header">
+                <div class="company-info">
+                    <h2>CONSORCIO DE PROPIETARIOS DEL EDIFICIO PALOS 285</h2>
+                    <p>CUIT: 30559333022</p>
+                    <p>Domicilio: Capital Federal</p>
+                </div>
+                <div class="receipt-title">
+                    <div class="badge">ORIGINAL</div>
+                    <h1>RECIBO DE HABERES</h1>
+                    <p class="period">Período: <strong>Junio 2026</strong></p>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="grid-col">
+                    <p><span>Legajo:</span> 2</p>
+                    <p><span>Empleado:</span> <strong>LEDESMA SANTIAGO DAVID</strong></p>
+                    <p><span>CUIL:</span> 20263485409</p>
+                    <p><span>Fecha de Ingreso:</span> 1/10/2014</p>
+                </div>
+                <div class="grid-col">
+                    <p><span>Función/Categoría:</span> Encargado No Permanente Sin vivienda (3° Cat.)</p>
+                    <p><span>Antigüedad:</span> 11 años</p>
+                    <p><span>Banco:</span> BBVA</p>
+                    <p><span>CBU:</span> CBU:0170003940000009341199</p>
+                </div>
+            </div>
+
+            <table class="concepts-table">
+                <thead>
+                    <tr>
+                        <th style="width: 6%">Cód</th>
+                        <th style="width: 30%">Concepto (Haberes)</th>
+                        <th style="width: 14%" class="text-right">Importe</th>
+                        <th style="width: 6%" class="line-left">Cód</th>
+                        <th style="width: 30%">Concepto (Descuentos)</th>
+                        <th style="width: 14%" class="text-right">Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                <tr>
+                    <td class="code">1000</td>
+                    <td>Sueldo Básico <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 598.586,00</td>
+                    <td class="code line-left">5000</td>
+                    <td>Jubilación <span class="qty-badge">11%</span></td>
+                    <td class="amount text-right">$ 119.187,93</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1300</td>
+                    <td>Plus por antigüedad – por año ART. 11 ( 2%) <span class="qty-badge">11</span></td>
+                    <td class="amount text-right">$ 0,00</td>
+                    <td class="code line-left">5050</td>
+                    <td>Ley 19032 <span class="qty-badge">3%</span></td>
+                    <td class="amount text-right">$ 32.505,80</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1700</td>
+                    <td>Adicional Viaticos <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 73.765,10</td>
+                    <td class="code line-left">5100</td>
+                    <td>Obra Social <span class="qty-badge">3%</span></td>
+                    <td class="amount text-right">$ 32.505,80</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1750</td>
+                    <td>Adicional Remuneratorio Mensual <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 50.000,00</td>
+                    <td class="code line-left">5150</td>
+                    <td>Diferencia Obra Social Ley 26475 <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 2.163,37</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">2200</td>
+                    <td>Sueldo anual complementario <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 361.175,55</td>
+                    <td class="code line-left">5200</td>
+                    <td>SUTERH <span class="qty-badge">2%</span></td>
+                    <td class="amount text-right">$ 21.670,53</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">9000</td>
+                    <td>Redondeo <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 0,77</td>
+                    <td class="code line-left">5250</td>
+                    <td>Caja Prot. Flia. <span class="qty-badge">1%</span></td>
+                    <td class="amount text-right">$ 10.835,27</td>
+                </tr>
+            
+                <tr>
+                    <td class="code"></td>
+                    <td> <span class="qty-badge"></span></td>
+                    <td class="amount text-right"></td>
+                    <td class="code line-left">5300</td>
+                    <td>FATERYH <span class="qty-badge">1%</span></td>
+                    <td class="amount text-right">$ 10.835,27</td>
+                </tr>
+            
+                <tr>
+                    <td class="code"></td>
+                    <td> <span class="qty-badge"></span></td>
+                    <td class="amount text-right"></td>
+                    <td class="code line-left">5350</td>
+                    <td>Seguro vitalicio - Art. 27 bis CCT 589/10 <span class="qty-badge">0.75%</span></td>
+                    <td class="amount text-right">$ 8.126,45</td>
+                </tr>
+            
+                </tbody>
+                <tfoot>
+                    <tr class="totals-row">
+                        <td colspan="2">TOTAL HABERES</td>
+                        <td class="text-right">$ 1.083.527,42</td>
+                        <td colspan="2" class="line-left">TOTAL DESCUENTOS</td>
+                        <td class="text-right">$ 237.830,42</td>
+                    </tr>
+                    <tr class="net-row">
+                        <td colspan="3">Son: <span class="son-pesos">PESOS 845697 con 00/100 M.N.</span></td>
+                        <td colspan="2" class="line-left net-label">NETO A COBRAR</td>
+                        <td class="text-right net-val">$ 845.697,00</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="receipt-footer">
+                <div class="signature-box">
+                    <p class="date-line">Recibí el importe de este recibo de conformidad.</p>
+                    <div class="signature-line">
+                        <span>Firma del Empleado</span>
+                    </div>
+                </div>
+                <div class="signature-box">
+                    <p class="date-line">Lugar y Fecha de Pago: C.A.B.A., ____/____/2026</p>
+                    <div class="signature-line">
+                        <span>Firma del Empleador</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <div class="cut-line">
+                <span>✂ Cortar aquí</span>
+            </div>
+            
+        <div class="receipt-box">
+            <div class="receipt-header">
+                <div class="company-info">
+                    <h2>CONSORCIO DE PROPIETARIOS DEL EDIFICIO PALOS 285</h2>
+                    <p>CUIT: 30559333022</p>
+                    <p>Domicilio: Capital Federal</p>
+                </div>
+                <div class="receipt-title">
+                    <div class="badge">DUPLICADO</div>
+                    <h1>RECIBO DE HABERES</h1>
+                    <p class="period">Período: <strong>Junio 2026</strong></p>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="grid-col">
+                    <p><span>Legajo:</span> 2</p>
+                    <p><span>Empleado:</span> <strong>LEDESMA SANTIAGO DAVID</strong></p>
+                    <p><span>CUIL:</span> 20263485409</p>
+                    <p><span>Fecha de Ingreso:</span> 1/10/2014</p>
+                </div>
+                <div class="grid-col">
+                    <p><span>Función/Categoría:</span> Encargado No Permanente Sin vivienda (3° Cat.)</p>
+                    <p><span>Antigüedad:</span> 11 años</p>
+                    <p><span>Banco:</span> BBVA</p>
+                    <p><span>CBU:</span> CBU:0170003940000009341199</p>
+                </div>
+            </div>
+
+            <table class="concepts-table">
+                <thead>
+                    <tr>
+                        <th style="width: 6%">Cód</th>
+                        <th style="width: 30%">Concepto (Haberes)</th>
+                        <th style="width: 14%" class="text-right">Importe</th>
+                        <th style="width: 6%" class="line-left">Cód</th>
+                        <th style="width: 30%">Concepto (Descuentos)</th>
+                        <th style="width: 14%" class="text-right">Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                <tr>
+                    <td class="code">1000</td>
+                    <td>Sueldo Básico <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 598.586,00</td>
+                    <td class="code line-left">5000</td>
+                    <td>Jubilación <span class="qty-badge">11%</span></td>
+                    <td class="amount text-right">$ 119.187,93</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1300</td>
+                    <td>Plus por antigüedad – por año ART. 11 ( 2%) <span class="qty-badge">11</span></td>
+                    <td class="amount text-right">$ 0,00</td>
+                    <td class="code line-left">5050</td>
+                    <td>Ley 19032 <span class="qty-badge">3%</span></td>
+                    <td class="amount text-right">$ 32.505,80</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1700</td>
+                    <td>Adicional Viaticos <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 73.765,10</td>
+                    <td class="code line-left">5100</td>
+                    <td>Obra Social <span class="qty-badge">3%</span></td>
+                    <td class="amount text-right">$ 32.505,80</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">1750</td>
+                    <td>Adicional Remuneratorio Mensual <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 50.000,00</td>
+                    <td class="code line-left">5150</td>
+                    <td>Diferencia Obra Social Ley 26475 <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 2.163,37</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">2200</td>
+                    <td>Sueldo anual complementario <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 361.175,55</td>
+                    <td class="code line-left">5200</td>
+                    <td>SUTERH <span class="qty-badge">2%</span></td>
+                    <td class="amount text-right">$ 21.670,53</td>
+                </tr>
+            
+                <tr>
+                    <td class="code">9000</td>
+                    <td>Redondeo <span class="qty-badge"></span></td>
+                    <td class="amount text-right">$ 0,77</td>
+                    <td class="code line-left">5250</td>
+                    <td>Caja Prot. Flia. <span class="qty-badge">1%</span></td>
+                    <td class="amount text-right">$ 10.835,27</td>
+                </tr>
+            
+                <tr>
+                    <td class="code"></td>
+                    <td> <span class="qty-badge"></span></td>
+                    <td class="amount text-right"></td>
+                    <td class="code line-left">5300</td>
+                    <td>FATERYH <span class="qty-badge">1%</span></td>
+                    <td class="amount text-right">$ 10.835,27</td>
+                </tr>
+            
+                <tr>
+                    <td class="code"></td>
+                    <td> <span class="qty-badge"></span></td>
+                    <td class="amount text-right"></td>
+                    <td class="code line-left">5350</td>
+                    <td>Seguro vitalicio - Art. 27 bis CCT 589/10 <span class="qty-badge">0.75%</span></td>
+                    <td class="amount text-right">$ 8.126,45</td>
+                </tr>
+            
+                </tbody>
+                <tfoot>
+                    <tr class="totals-row">
+                        <td colspan="2">TOTAL HABERES</td>
+                        <td class="text-right">$ 1.083.527,42</td>
+                        <td colspan="2" class="line-left">TOTAL DESCUENTOS</td>
+                        <td class="text-right">$ 237.830,42</td>
+                    </tr>
+                    <tr class="net-row">
+                        <td colspan="3">Son: <span class="son-pesos">PESOS 845697 con 00/100 M.N.</span></td>
+                        <td colspan="2" class="line-left net-label">NETO A COBRAR</td>
+                        <td class="text-right net-val">$ 845.697,00</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="receipt-footer">
+                <div class="signature-box">
+                    <p class="date-line">Recibí el importe de este recibo de conformidad.</p>
+                    <div class="signature-line">
+                        <span>Firma del Empleado</span>
+                    </div>
+                </div>
+                <div class="signature-box">
+                    <p class="date-line">Lugar y Fecha de Pago: C.A.B.A., ____/____/2026</p>
+                    <div class="signature-line">
+                        <span>Firma del Empleador</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </body>
+    </html>
+    

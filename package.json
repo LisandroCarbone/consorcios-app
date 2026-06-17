@@ -1,0 +1,13 @@
+{
+  "name": "consorcios-automa",
+  "version": "1.0.0",
+  "description": "Consorcios Automation Engine",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "local": "node main.js --local"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
