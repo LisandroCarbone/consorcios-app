@@ -1,0 +1,89 @@
+├── .gitignore
+├── afip_lsd_30519077635.txt
+├── afip_lsd_30532673484.txt
+├── afip_lsd_30537480544.txt
+├── afip_lsd_30538590009.txt
+├── afip_lsd_30540887752.txt
+├── afip_lsd_30559333022.txt
+├── afip_lsd_30580260906.txt
+├── afip_lsd_30604528166.txt
+├── afip_lsd_30630042670.txt
+├── afip_lsd_30711283338.txt
+├── afip_lsd_30711553165.txt
+├── afip_lsd_30711776903.txt
+├── afip_lsd_exporter.js
+├── ARENALES  0526.xls
+├── Azcuenaga 1570 0526.xls
+├── belgrano 1270 0526.xlsx
+├── BROWN 0526.xls
+├── Bustamente 2468 0526.xls
+├── dashboard.html
+├── db.json
+├── db_manager.js
+├── docs_fusion/
+├── expensas_UF_1.html
+├── expensas_UF_16.html
+├── expenses_engine.js
+├── LIMA 0526.xlsx
+├── Liquidacion-expensas-modelo.xls
+├── Liquidacion-sueldos-modelo.xls.xlsm
+├── M OCA 0526.xlsx
+├── main.js
+├── migrate_to_db.js
+├── package-lock.json
+├── package.json
+├── PALOS  0526.xls
+├── payroll_engine.js
+├── pdf_generator.js
+├── receipt_parser.js
+├── recibo_CANCINOS_MARGARITA.html
+├── recibo_CORONEL_CARLOS_EMIGDIO.html
+├── recibo_CORONEL_EDGARDO_DARIO.html
+├── recibo_ESPONDA_JOSE_MARIA.html
+├── recibo_ESTIGARRIBIA_ARCE_DARIO.html
+├── recibo_GIACOMO_SEBASTIAN_LUIS.html
+├── recibo_LEDESMA_SANTIAGO_DAVID.html
+├── recibo_LIMA_CENTURION_RONAL_DEJESUS.html
+├── recibo_PIÑERO_BIBIANA_PATRICIA.html
+├── recibo_PIÑERO_CLAUDIA_ELIZABET.html
+├── recibo_PIÑERO_SONIA_MERCEDES.html
+├── recibo_RIOS_LUIS_ALBERTO.html
+├── recibo_RIOS_MATIAS_ALEJANDRO.html
+├── recibo_RODA_MARIO_GUSTAVO.html
+├── recibo_RODRIGUEZ_ALFREDO_RAUL.html
+├── recibo_ROJAS_CARLOS_MANUEL.html
+├── recibo_TORRES_ORTIZ_DENIS_RAMON.html
+├── recibo_VERON_CARLOS_ALBERTO.html
+├── ROD PEÑA 0526.xlsx
+├── SALTA 555 0526.xls
+├── SAN JOSE 0526.xls
+├── Sant 0526.xls
+├── scales_2026-05.json
+├── scratch/
+│   ├── check_db.js
+│   ├── cleanup_test_data.js
+│   ├── clean_periods.js
+│   ├── debug_match.js
+│   ├── find_fn.js
+│   ├── find_syntax_error.js
+│   ├── fix_employee_dates.js
+│   ├── inspect_consorcio.js
+│   ├── inspect_employee.js
+│   ├── inspect_novedades.js
+│   ├── inspect_sanjose.js
+│   ├── register_test_email.js
+│   ├── restore_sanjose_units.js
+│   ├── search_code.js
+│   ├── search_pdf_gen.js
+│   ├── search_sac.js
+│   ├── test_endpoints.js
+│   ├── test_ingestion.js
+│   ├── test_new_building_payroll.js
+│   ├── test_notifications.js
+│   ├── test_payslip.html
+│   ├── test_payslip_reform.js
+│   └── test_sac_proportional.js
+├── suterh_scraper.js
+├── URUGUAY 052026.pdf
+├── URUGUAY 052026.xlsx
+└── YRIGOYEN 052026.xls
