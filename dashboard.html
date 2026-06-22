@@ -470,8 +470,8 @@
                 <option value="2026-05" selected>Mayo 2026</option>
                 <option value="2026-04">Abril 2026</option>
             </select>
-            <button class="btn-process" onclick="processData()">
-                <span>⚡ Procesar Planillas</span>
+            <button class="btn-process" onclick="btnLiquidarPeriodo()">
+                <span>⚡ Liquidar Período</span>
             </button>
         </div>
     </header>
@@ -537,7 +537,7 @@
                     <tbody id="payroll-table-body">
                         <tr>
                             <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 40px;">
-                                Haz click en "Procesar Planillas" arriba a la derecha para cargar la información.
+                                Haz click en "Liquidar Período" arriba a la derecha para cargar la información.
                             </td>
                         </tr>
                     </tbody>
@@ -554,7 +554,7 @@
         <div id="afip-tab" class="tab-content">
             <div id="afip-container">
                 <div class="table-card" style="padding: 20px; color: var(--text-muted); text-align: center;">
-                    Haz click en "Procesar Planillas" arriba a la derecha para generar los archivos AFIP LSD.
+                    Haz click en "Liquidar Período" arriba a la derecha para generar los archivos AFIP LSD.
                 </div>
             </div>
         </div>
@@ -605,7 +605,7 @@
                     <tbody id="expenses-table-body">
                         <tr>
                             <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 40px;">
-                                Haz click en "Procesar Planillas" arriba a la derecha para cargar la información.
+                                Haz click en "Liquidar Período" arriba a la derecha para cargar la información.
                             </td>
                         </tr>
                     </tbody>
@@ -1333,6 +1333,23 @@
                     cancelButton: 'swal-custom-cancel-btn'
                 },
                 buttonsStyling: false
+            });
+        }
+
+        function btnLiquidarPeriodo() {
+            const period = document.getElementById('period-selector').value;
+            const selector = document.getElementById('consorcio-selector');
+            const consorcioName = selector.options[selector.selectedIndex]?.text || '';
+            
+            showConfirm(
+                '¿Liquidar Período?', 
+                `¿Está seguro de que desea liquidar el período ${period} para el consorcio "${consorcioName}"?`,
+                'Sí, liquidar',
+                'Cancelar'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    processData();
+                }
             });
         }
 
